@@ -11,8 +11,8 @@ void fact (n : int, a : int)
          fact (n-1, b);  
       }
       else
-      {  print(a);   }; hola
-   }}
+      {  print(a);   }; 
+   }
 ];
 
 
@@ -21,9 +21,9 @@ void some_other( n : int )
    
    {  n = "woooooooooo 5"; 
       print("hello "); 
-      xf = 7;
+      xf = 7;; hola
 
-      fact(3, 1, 4);
+      fact(3, 1);
    } ]
 ;
 

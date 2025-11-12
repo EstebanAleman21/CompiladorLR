@@ -26,6 +26,7 @@ reserved = {
 }
 
 # Tokens
+# BNF only specifies: '>' | '<' | '!=' for relational operators
 tokens = [
     'CONST_INT',
     'CONST_FLOAT',
@@ -36,10 +37,7 @@ tokens = [
     'OP_RESTA',
     'OP_MULT',
     'OP_DIV',
-    'OP_EQ',
     'OP_NEQ',
-    'OP_LEQ',
-    'OP_GEQ',
     'OP_LT',
     'OP_GT',
     'LPAREN',
@@ -60,10 +58,8 @@ parser_errors = []
 t_ignore = ' \t\r'
 
 # Operadores
-t_OP_EQ = r'=='
+# BNF only specifies: '>' | '<' | '!=' for relational operators
 t_OP_NEQ = r'!='
-t_OP_LEQ = r'<='
-t_OP_GEQ = r'>='
 t_OP_LT = r'<'
 t_OP_GT = r'>'
 t_OP_ASIGNA = r'='
@@ -132,7 +128,7 @@ print("✅ Lexer construido correctamente")
 ###############################################################
 
 precedence = (
-    ('left', 'OP_EQ', 'OP_NEQ', 'OP_LT', 'OP_GT', 'OP_LEQ', 'OP_GEQ'),
+    ('left', 'OP_NEQ', 'OP_LT', 'OP_GT'),  # BNF: only '>', '<', '!='
     ('left', 'OP_SUMA', 'OP_RESTA'),
     ('left', 'OP_MULT', 'OP_DIV'),
     ('right', 'UMINUS'),
@@ -147,10 +143,8 @@ def p_program(p):
     p[0] = ('program', p[2], p[4], p[5], p[7])
 
 # VARS
-def p_vars_empty(p):
-    '''vars : empty'''
-    p[0] = []
-
+# BNF requires vars ::= ('var' id (',' id)* ':' type ';')+
+# The '+' means one or more, so we remove the empty production
 def p_vars_first(p):
     '''vars : VAR var_list'''
     p[0] = p[2]
@@ -294,6 +288,8 @@ def p_rel_exp_tail_rel(p):
     '''rel_exp_tail : rel_op exp'''
     p[0] = (p[1], p[2])
 
+# BNF requires expression ::= (exp) (('>' | '<' | '!=') exp)*
+# Only these three relational operators are specified
 def p_rel_op_gt(p):
     '''rel_op : OP_GT'''
     p[0] = '>'
@@ -305,18 +301,6 @@ def p_rel_op_lt(p):
 def p_rel_op_neq(p):
     '''rel_op : OP_NEQ'''
     p[0] = '!='
-
-def p_rel_op_eq(p):
-    '''rel_op : OP_EQ'''
-    p[0] = '=='
-
-def p_rel_op_geq(p):
-    '''rel_op : OP_GEQ'''
-    p[0] = '>='
-
-def p_rel_op_leq(p):
-    '''rel_op : OP_LEQ'''
-    p[0] = '<='
 
 def p_exp_sum(p):
     '''exp : exp OP_SUMA termino'''
@@ -346,9 +330,13 @@ def p_factor_group(p):
     '''factor : LPAREN expression RPAREN'''
     p[0] = p[2]
 
-def p_factor_sign(p):
+def p_factor_sign_minus(p):
     '''factor : OP_RESTA factor %prec UMINUS'''
     p[0] = ('uminus', p[2])
+
+def p_factor_sign_plus(p):
+    '''factor : OP_SUMA factor %prec UMINUS'''
+    p[0] = ('uplus', p[2])
 
 def p_factor_id(p):
     '''factor : ID'''
@@ -406,10 +394,8 @@ def p_f_call(p):
     '''f_call : ID LPAREN call_args RPAREN SEMICOL'''
     p[0] = ('call', p[1], p[3])
 
-def p_call_args_empty(p):
-    '''call_args : empty'''
-    p[0] = []
-
+# BNF requires f_call ::= id '(' (expression) (','(expression))* ')' ';'
+# This means at least one expression is required, so we remove empty production
 def p_call_args_single(p):
     '''call_args : expression'''
     p[0] = [p[1]]
