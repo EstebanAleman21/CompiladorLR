@@ -8,7 +8,7 @@ void fact (n : int, a : int)
 
    {  if (n > 1 )
       {  b = a * n;
-         fact (n-1, b);  
+         fact (n-1, b);  hola2
       }
       else
       {  print(a);   }; 
@@ -17,11 +17,11 @@ void fact (n : int, a : int)
 
 
 void some_other( n : int )
-[  var n : float;
+[  var n : float; hola
    
    {  n = "woooooooooo 5"; 
       print("hello "); 
-      xf = 7;; hola
+      xf = 7;
 
       fact(3, 1);
    } ]
@@ -40,7 +40,7 @@ main
     }while( 3 < 5 / 1.5  );
 
 
-    if ( 3 >= 8)
+    if ( 3 >=  8)
     {
       print("texto ");
       n = 58 + 9 * 5;

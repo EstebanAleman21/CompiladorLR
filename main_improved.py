@@ -26,7 +26,7 @@ reserved = {
 }
 
 # Tokens
-# BNF only specifies: '>' | '<' | '!=' for relational operators
+# Extended relational operators based on diagram (includes >=, <=, ==, etc)
 tokens = [
     'CONST_INT',
     'CONST_FLOAT',
@@ -37,7 +37,10 @@ tokens = [
     'OP_RESTA',
     'OP_MULT',
     'OP_DIV',
+    'OP_EQ',
     'OP_NEQ',
+    'OP_LEQ',
+    'OP_GEQ',
     'OP_LT',
     'OP_GT',
     'LPAREN',
@@ -58,8 +61,11 @@ parser_errors = []
 t_ignore = ' \t\r'
 
 # Operadores
-# BNF only specifies: '>' | '<' | '!=' for relational operators
+# Extended relational operators (order matters for regex matching!)
+t_OP_EQ = r'=='
 t_OP_NEQ = r'!='
+t_OP_LEQ = r'<='
+t_OP_GEQ = r'>='
 t_OP_LT = r'<'
 t_OP_GT = r'>'
 t_OP_ASIGNA = r'='
@@ -128,7 +134,7 @@ print("✅ Lexer construido correctamente")
 ###############################################################
 
 precedence = (
-    ('left', 'OP_NEQ', 'OP_LT', 'OP_GT'),  # BNF: only '>', '<', '!='
+    ('left', 'OP_EQ', 'OP_NEQ', 'OP_LT', 'OP_GT', 'OP_LEQ', 'OP_GEQ'),  # Extended relational operators
     ('left', 'OP_SUMA', 'OP_RESTA'),
     ('left', 'OP_MULT', 'OP_DIV'),
     ('right', 'UMINUS'),
@@ -288,8 +294,7 @@ def p_rel_exp_tail_rel(p):
     '''rel_exp_tail : rel_op exp'''
     p[0] = (p[1], p[2])
 
-# BNF requires expression ::= (exp) (('>' | '<' | '!=') exp)*
-# Only these three relational operators are specified
+# Extended relational operators based on expression diagram
 def p_rel_op_gt(p):
     '''rel_op : OP_GT'''
     p[0] = '>'
@@ -301,6 +306,18 @@ def p_rel_op_lt(p):
 def p_rel_op_neq(p):
     '''rel_op : OP_NEQ'''
     p[0] = '!='
+
+def p_rel_op_eq(p):
+    '''rel_op : OP_EQ'''
+    p[0] = '=='
+
+def p_rel_op_geq(p):
+    '''rel_op : OP_GEQ'''
+    p[0] = '>='
+
+def p_rel_op_leq(p):
+    '''rel_op : OP_LEQ'''
+    p[0] = '<='
 
 def p_exp_sum(p):
     '''exp : exp OP_SUMA termino'''
