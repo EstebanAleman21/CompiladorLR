@@ -1,0 +1,21 @@
+program test;
+var x : int;
+
+void func1 (a : int)
+[  var b : int;
+
+   {  b = a * 2;
+      print(b);
+   }
+];
+
+main
+{  x = 5;
+   if ( x > 3
+   {
+      print("error here - missing )");
+   };
+
+   x = 10;
+}
+end

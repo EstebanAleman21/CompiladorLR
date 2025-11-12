@@ -1,0 +1,25 @@
+program test;
+var x : int;
+
+void func1 (a : int, , c : float)
+[  var b : int;
+
+   {  b = a + 1;
+      print(b);
+   }
+];
+
+void func2 (x : int)
+[  var y : int;
+
+   {  y = x * 2
+      print(y);
+   }
+];
+
+main
+{  x = 5;
+   func1(1, 2);
+   func2(x);
+}
+end

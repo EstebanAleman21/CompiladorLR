@@ -489,6 +489,38 @@ def p_cycle_error(p):
     else:
         p[0] = ('do_while', p[2], ('error',))
 
+# REGLA 7: Error en asignación - Sincroniza en ;
+def p_assign_error(p):
+    '''assign : ID OP_ASIGNA error SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en expresión de asignación a '{p[1]}'"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('assign', p[1], ('error',))
+
+# REGLA 8: Error en llamada a función - Sincroniza en ;
+def p_f_call_error(p):
+    '''f_call : ID LPAREN error RPAREN SEMICOL
+              | ID error SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en llamada a función '{p[1]}'"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('call', p[1], [])
+
+# REGLA 9: Error en función void - Sincroniza en ;
+def p_func_error(p):
+    '''func : VOID ID LPAREN error RPAREN LBRACK func_vars body RBRACK SEMICOL
+            | VOID ID LPAREN params RPAREN LBRACK error RBRACK SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en definición de función '{p[2]}'"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    if p[4] == 'error':
+        p[0] = ('func_decl', p[2], [], p[7], p[8])
+    else:
+        p[0] = ('func_decl', p[2], p[4], [], ('body', []))
+
 # MANEJO GLOBAL DE ERRORES (Fallback cuando las reglas no capturan)
 def p_error(p):
     if p:
@@ -507,8 +539,12 @@ def p_error(p):
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
 
-        # Estrategia: Descartar el token problemático y continuar
-        # No intentar buscar sync tokens aquí - dejar que las reglas de error lo manejen
+        # STRATEGY: When using grammar error rules (error token in productions),
+        # DO NOT call parser.errok() here. Let the grammar rules handle it.
+        # The parser enters "error mode" after p_error() and will look for
+        # grammar rules with the 'error' token. When one matches and calls
+        # parser.errok(), the parser exits error mode.
+        # This is the recommended approach per PLY docs (line 2008).
     else:
         error_msg = "ERROR SINTÁCTICO: Fin inesperado del archivo"
         parser_errors.append(error_msg)
