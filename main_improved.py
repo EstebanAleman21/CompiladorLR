@@ -1,7 +1,6 @@
 #############################################
 #   LEXER Y PARSER - VERSIÓN MEJORADA
-#   Usando las mejores prácticas de PLY para error recovery
-#   Combina: error token en gramática + p_error() inteligente
+#   Usando la documentacion de PLY para error recovery
 #############################################
 
 import ply.lex as lex
@@ -26,7 +25,6 @@ reserved = {
 }
 
 # Tokens
-# Extended relational operators based on diagram (includes >=, <=, ==, etc)
 tokens = [
     'CONST_INT',
     'CONST_FLOAT',
@@ -61,7 +59,6 @@ parser_errors = []
 t_ignore = ' \t\r'
 
 # Operadores
-# Extended relational operators (order matters for regex matching!)
 t_OP_EQ = r'=='
 t_OP_NEQ = r'!='
 t_OP_LEQ = r'<='
@@ -134,7 +131,7 @@ print("✅ Lexer construido correctamente")
 ###############################################################
 
 precedence = (
-    ('left', 'OP_EQ', 'OP_NEQ', 'OP_LT', 'OP_GT', 'OP_LEQ', 'OP_GEQ'),  # Extended relational operators
+    ('left', 'OP_EQ', 'OP_NEQ', 'OP_LT', 'OP_GT', 'OP_LEQ', 'OP_GEQ'), 
     ('left', 'OP_SUMA', 'OP_RESTA'),
     ('left', 'OP_MULT', 'OP_DIV'),
     ('right', 'UMINUS'),
@@ -149,8 +146,6 @@ def p_program(p):
     p[0] = ('program', p[2], p[4], p[5], p[7])
 
 # VARS
-# BNF requires vars ::= ('var' id (',' id)* ':' type ';')+
-# The '+' means one or more, so we remove the empty production
 def p_vars_first(p):
     '''vars : VAR var_list'''
     p[0] = p[2]
@@ -294,7 +289,6 @@ def p_rel_exp_tail_rel(p):
     '''rel_exp_tail : rel_op exp'''
     p[0] = (p[1], p[2])
 
-# Extended relational operators based on expression diagram
 def p_rel_op_gt(p):
     '''rel_op : OP_GT'''
     p[0] = '>'
@@ -412,7 +406,6 @@ def p_f_call(p):
     p[0] = ('call', p[1], p[3])
 
 # BNF requires f_call ::= id '(' (expression) (','(expression))* ')' ';'
-# This means at least one expression is required, so we remove empty production
 def p_call_args_single(p):
     '''call_args : expression'''
     p[0] = [p[1]]
@@ -426,8 +419,7 @@ def p_empty(p):
     pass
 
 ###############################################################
-#  ERROR RECOVERY - MEJORES PRÁCTICAS DE PLY
-#  Estrategia: Usar 'error' token en puntos de sincronización clave
+#  ERROR RECOVERY - PRÁCTICAS DE PLY
 ###############################################################
 
 # REGLA 1: Error general en statements - Sincroniza en ; (MÁS IMPORTANTE)
@@ -541,13 +533,6 @@ def p_error(p):
 
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
-
-        # STRATEGY: When using grammar error rules (error token in productions),
-        # DO NOT call parser.errok() here. Let the grammar rules handle it.
-        # The parser enters "error mode" after p_error() and will look for
-        # grammar rules with the 'error' token. When one matches and calls
-        # parser.errok(), the parser exits error mode.
-        # This is the recommended approach per PLY docs (line 2008).
     else:
         error_msg = "ERROR SINTÁCTICO: Fin inesperado del archivo"
         parser_errors.append(error_msg)
@@ -559,7 +544,6 @@ def p_error(p):
 
 parser = yacc.yacc(write_tables=False, debug=False)
 print("✅ Parser LR construido correctamente")
-print("   📖 Usando error recovery híbrido (grammar rules + p_error)\n")
 
 ###############################################################
 #              FUNCIONES PARA ANÁLISIS DE ARCHIVOS
@@ -677,7 +661,7 @@ def analizar_codigo_directo(codigo, nombre="código"):
 
 if __name__ == "__main__":
     print("\n" + "="*70)
-    print("COMPILADOR LITTLE DUCK - ERROR RECOVERY MEJORADO")
+    print("COMPILADOR LITTLE DUCK")
     print("="*70 + "\n")
 
     # Ejemplos de prueba

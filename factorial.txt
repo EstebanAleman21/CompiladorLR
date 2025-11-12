@@ -8,7 +8,7 @@ void fact (n : int, a : int)
 
    {  if (n > 1 )
       {  b = a * n;
-         fact (n-1, b);  hola2
+         fact (n-1, b);
       }
       else
       {  print(a);   }; 
@@ -17,7 +17,7 @@ void fact (n : int, a : int)
 
 
 void some_other( n : int )
-[  var n : float; hola
+[  var n : float;
    
    {  n = "woooooooooo 5"; 
       print("hello "); 
