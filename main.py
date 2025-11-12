@@ -145,22 +145,22 @@ def p_program(p):
     '''program : PROGRAM ID SEMICOL vars funcs MAIN body END'''
     p[0] = ('program', p[2], p[4], p[5], p[7])
 
-# VARS - Reglas separadas
+# VARS - Acepta tanto "var id:type;" como "id:type;" en continuación
 def p_vars_empty(p):
     '''vars : empty'''
     p[0] = []
 
-def p_vars_multiple(p):
-    '''vars : vars var'''
-    p[0] = p[1] + [p[2]]
+def p_vars_first(p):
+    '''vars : VAR var_list'''
+    p[0] = p[2]
 
-def p_var(p):
-    '''var : VAR id_list COLON type SEMICOL'''
-    p[0] = ('var_decl', p[2], p[4])
+def p_var_list_single(p):
+    '''var_list : id_list COLON type SEMICOL'''
+    p[0] = [('var_decl', p[1], p[3])]
 
-def p_vars_continuation(p):
-    '''vars : vars id_list COLON type SEMICOL'''
-    p[0] = p[1] + [('var_decl', p[2], p[4])]
+def p_var_list_multiple(p):
+    '''var_list : id_list COLON type SEMICOL var_list'''
+    p[0] = [('var_decl', p[1], p[3])] + p[5]
 
 # ID_LIST - Reglas separadas
 def p_id_list_single(p):
@@ -198,8 +198,25 @@ def p_funcs_multiple(p):
     p[0] = p[1] + [p[2]]
 
 def p_func(p):
-    '''func : VOID ID LPAREN params RPAREN LBRACK vars body RBRACK SEMICOL'''
+    '''func : VOID ID LPAREN params RPAREN LBRACK func_vars body RBRACK SEMICOL'''
     p[0] = ('func_decl', p[2], p[4], p[7], p[8])
+
+# FUNC_VARS - Variables dentro de funciones (similar a vars pero local)
+def p_func_vars_empty(p):
+    '''func_vars : empty'''
+    p[0] = []
+
+def p_func_vars_first(p):
+    '''func_vars : VAR func_var_list'''
+    p[0] = p[2]
+
+def p_func_var_list_single(p):
+    '''func_var_list : id_list COLON type SEMICOL'''
+    p[0] = [('var_decl', p[1], p[3])]
+
+def p_func_var_list_multiple(p):
+    '''func_var_list : id_list COLON type SEMICOL func_var_list'''
+    p[0] = [('var_decl', p[1], p[3])] + p[5]
 
 # PARAMS - Reglas separadas
 def p_params_empty(p):
@@ -414,24 +431,234 @@ def p_empty(p):
     '''empty :'''
     pass
 
+# REGLAS DE RECUPERACIÓN DE ERRORES
+
+# 1. Error en el header del programa (falta ;)
+def p_program_error_semicol(p):
+    '''program : PROGRAM ID error vars funcs MAIN body END'''
+    msg = f"⚠️ RECUPERACIÓN: Falta ';' después del nombre del programa en línea {p.lineno(2)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('program', p[2], p[4], p[5], p[7])
+
+# 2. Error en declaración de variables
+def p_var_list_error(p):
+    '''var_list : error SEMICOL
+                | error SEMICOL var_list'''
+    msg = f"⚠️ RECUPERACIÓN: Ignorando declaración de variable inválida"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = [] if len(p) == 3 else p[3]
+
+# 3. Error en declaración de función
+def p_func_error_params(p):
+    '''func : VOID ID LPAREN error RPAREN LBRACK func_vars body RBRACK SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en parámetros de función '{p[2]}' en línea {p.lineno(2)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('func_decl', p[2], [], p[7], p[8])
+
+def p_func_error_body(p):
+    '''func : VOID ID LPAREN params RPAREN LBRACK func_vars error RBRACK SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en cuerpo de función '{p[2]}' en línea {p.lineno(2)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('func_decl', p[2], p[4], p[7], ('body', []))
+
+# 4. Error en parámetros
+def p_param_list_error(p):
+    '''param_list : error
+                  | error COMMA param_list'''
+    msg = f"⚠️ RECUPERACIÓN: Error en lista de parámetros"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = [] if len(p) == 2 else p[3]
+
+# 5. Error en body/bloque
+def p_body_error(p):
+    '''body : LBRACE error RBRACE'''
+    msg = f"⚠️ RECUPERACIÓN: Ignorando bloque con errores en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('body', [])
+
+# 6. Error en statement general
+def p_statement_error(p):
+    '''statement : error SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Ignorando statement inválido hasta ';' en línea {p.lineno(2)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+
+# 7. Error en asignación
+def p_assign_error_expr(p):
+    '''assign : ID OP_ASIGNA error SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en expresión de asignación a '{p[1]}' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('assign', p[1], ('error',))
+
+def p_assign_error_semicol(p):
+    '''assign : ID OP_ASIGNA expression error'''
+    msg = f"⚠️ RECUPERACIÓN: Falta ';' en asignación en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('assign', p[1], p[3])
+
+# 8. Error en condición if
+def p_condition_error_expr(p):
+    '''condition : IF LPAREN error RPAREN body else_part SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en condición de 'if' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('if', ('error',), p[5], p[6])
+
+def p_condition_error_body(p):
+    '''condition : IF LPAREN expression RPAREN error else_part SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en cuerpo de 'if' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('if', p[3], ('body', []), p[6])
+
+def p_condition_error_semicol(p):
+    '''condition : IF LPAREN expression RPAREN body else_part error'''
+    msg = f"⚠️ RECUPERACIÓN: Falta ';' después de 'if' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('if', p[3], p[5], p[6])
+
+# 9. Error en ciclo do-while
+def p_cycle_error_body(p):
+    '''cycle : DO error WHILE LPAREN expression RPAREN SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en cuerpo de 'do' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('do_while', ('body', []), p[5])
+
+def p_cycle_error_expr(p):
+    '''cycle : DO body WHILE LPAREN error RPAREN SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en condición de 'while' en línea {p.lineno(3)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('do_while', p[2], ('error',))
+
+def p_cycle_error_semicol(p):
+    '''cycle : DO body WHILE LPAREN expression RPAREN error'''
+    msg = f"⚠️ RECUPERACIÓN: Falta ';' después de 'do-while' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('do_while', p[2], p[5])
+
+# 10. Error en llamada a función
+def p_f_call_error_args(p):
+    '''f_call : ID LPAREN error RPAREN SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en argumentos de llamada a '{p[1]}' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('call', p[1], [])
+
+def p_f_call_error_semicol(p):
+    '''f_call : ID LPAREN call_args RPAREN error'''
+    msg = f"⚠️ RECUPERACIÓN: Falta ';' en llamada a función '{p[1]}' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('call', p[1], p[3])
+
+# 11. Error en print
+def p_print_error_args(p):
+    '''print_stmt : PRINT LPAREN error RPAREN SEMICOL'''
+    msg = f"⚠️ RECUPERACIÓN: Error en argumentos de 'print' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('print', [])
+
+def p_print_error_semicol(p):
+    '''print_stmt : PRINT LPAREN print_args RPAREN error'''
+    msg = f"⚠️ RECUPERACIÓN: Falta ';' después de 'print' en línea {p.lineno(1)}"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('print', p[3])
+
+# 12. Error en expresión (paréntesis sin cerrar, etc)
+def p_expression_error(p):
+    '''expression : error'''
+    msg = f"⚠️ RECUPERACIÓN: Error en expresión"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('error',)
+
+def p_factor_error_paren(p):
+    '''factor : LPAREN error RPAREN'''
+    msg = f"⚠️ RECUPERACIÓN: Error dentro de paréntesis"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = ('error',)
+
+# 13. Error en argumentos de llamada
+def p_call_args_error(p):
+    '''call_args : error
+                 | error COMMA call_args'''
+    msg = f"⚠️ RECUPERACIÓN: Error en lista de argumentos"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = [] if len(p) == 2 else p[3]
+
+# 14. Error en argumentos de print
+def p_print_args_error(p):
+    '''print_args : error
+                  | error COMMA print_args'''
+    msg = f"⚠️ RECUPERACIÓN: Error en argumentos de print"
+    parser_errors.append(msg)
+    print(msg)
+    parser.errok()
+    p[0] = [] if len(p) == 2 else p[3]
+
+def p_empty(p):
+    '''empty :'''
+    pass
+
 # MANEJO DE ERRORES CON RECUPERACIÓN
 def p_error(p):
     if p:
-        error_msg = f"ERROR SINTÁCTICO en línea {p.lineno}: Token inesperado '{p.value}' (tipo: {p.type})"
+        # Detectar IDs similares a keywords
+        similar = {
+            'doe': 'do', 'iff': 'if', 'whilee': 'while', 
+            'printx': 'print', 'voide': 'void', 'programm': 'program',
+            'maine': 'main', 'ende': 'end', 'intt': 'int', 'floatt': 'float'
+        }
+        
+        if p.type == 'ID' and p.value in similar:
+            error_msg = f"ERROR SINTÁCTICO en línea {p.lineno}: '{p.value}' no es válido (¿quisiste decir '{similar[p.value]}'?)"
+        else:
+            error_msg = f"ERROR SINTÁCTICO en línea {p.lineno}: Token inesperado '{p.value}' (tipo: {p.type})"
+        
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
-
-        # Estrategia de recuperación: saltar hasta el siguiente punto y coma
-        while True:
-            tok = parser.token()
-            if not tok or tok.type == 'SEMICOL':
-                break
-        parser.restart()
     else:
         error_msg = "ERROR SINTÁCTICO: Fin inesperado del archivo"
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
-
 ###############################################################
 #                    CONSTRUCCIÓN DEL PARSER
 ###############################################################
