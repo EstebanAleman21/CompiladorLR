@@ -5,20 +5,23 @@ var a, b, c : int;
 void testFunc(p : int)
 [ var local : int;
   
-  { // Error en asignación - se recupera en ;
+  { // Error 1: doble operador * en expresión
     local = 10 * * 5;
     
     // Statement válido después del error
-    print("Continuando...");
+    print("Después del primer error");
   }
 ];
 
-void anotherFunc(q : float
-[ // Error: falta paréntesis de cierre en parámetros
-  var temp : float;
+void calculate(num : int)
+[ var result : int;
   
-  { temp = q + 1.0;
-    print(temp);
+  { result = num * 2;
+    
+    // Error 2: expresión incompleta en asignación
+    result = result + ;
+    
+    print("Continuando después del error 2");
   }
 ];
 
@@ -26,36 +29,37 @@ main
 { a = 5;
   b = 10;
   
-  // Error en expresión de asignación
+  // Error 3: expresión incompleta
   c = a + ;
   
   // Se recupera y continúa
-  print("Después del error 1");
+  print("Después del error 3");
   
-  // Error en condición if
-  if (a > 
+  // Error 4: condición incompleta en if
+  if (a > )
   {
     print("En if");
   };
   
   // Se recupera y continúa
   b = 20;
+  print("b ahora es 20");
   
-  // Error en do-while
-  do {
-    print("En ciclo");
-    // Error en print
-    print(a, , b);
-  } while (a < b);
+  // Error 5: error en argumentos de print
+  print(a, , b);
   
   // Se recupera y continúa
-  print("Después del ciclo");
+  print("Después del error 5");
   
-  // Error en llamada a función
+  // Error 6: error en argumentos de llamada a función
   testFunc(5, , 3);
   
   // Statement válido al final
   c = a * b;
-  print("Fin: ", c);
+  
+  // Error 7: error en expresión dentro de paréntesis
+  c = (a + );
+  
+  print("Fin del programa");
 }
 end
