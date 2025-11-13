@@ -664,34 +664,15 @@ if __name__ == "__main__":
     print("COMPILADOR LITTLE DUCK")
     print("="*70 + "\n")
 
-    # Ejemplos de prueba
-    tests = [
-        ("Programa simple", """program test;
-var x:int;
-main {
-   x = 5 + 3 * 2;
-}
-end
-"""),
-        ("Programa con error léxico", """program test;
-var x:int;
-main {
-   x = 5 @ 3;
-}
-end
-"""),
-        ("Programa con error sintáctico", """program test;
-var x:int;
-main {
-   x = 5 +;
-}
-end
-""")
-    ]
-
-    for nombre, codigo in tests:
-        analizar_codigo_directo(codigo, nombre)
-        print("\n")
-
-    # Para analizar un archivo:
-    analizar_archivo("factorial.txt")
+    # Verificar si se proporcionó un argumento con el nombre del archivo
+    if len(sys.argv) < 2:
+        print("❌ ERROR: Debes proporcionar el nombre del archivo a analizar")
+        print("\nUso: python3 main_improved.py <nombre_archivo>")
+        print("\nEjemplo: python3 main_improved.py factorial.txt")
+        sys.exit(1)
+    
+    # Obtener el nombre del archivo del argumento
+    nombre_archivo = sys.argv[1]
+    
+    # Analizar el archivo proporcionado
+    analizar_archivo(nombre_archivo)
