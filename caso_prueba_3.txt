@@ -1,0 +1,92 @@
+program completeTest;
+var counter, limit : int;
+    average, sum : float;
+    message : string;
+
+void sumNumbers(n : int)
+[ var i, total : int;
+  
+  { i = 1;
+    total = 0;
+    
+    do {
+      total = total + i;
+      i = i + 1;
+    } while (i <= n);
+    
+    print("La suma es: ", total);
+  }
+];
+
+void checkRange(value : int, min : int, max : int)
+[ var inRange : int;
+  
+  { if (value >= min)
+    {
+      if (value <= max)
+      {
+        print("Valor en rango");
+        inRange = 1;
+      }
+      else
+      {
+        print("Valor muy grande");
+        inRange = 0;
+      };
+    }
+    else
+    {
+      print("Valor muy pequeño");
+      inRange = 0;
+    };
+  }
+];
+
+main 
+{ counter = 0;
+  limit = 5;
+  sum = 0.0;
+  average = 0.0;
+  
+  // Prueba de ciclo do-while
+  do {
+    counter = counter + 1;
+    sum = sum + counter;
+    print("Iteración: ", counter);
+  } while (counter < limit);
+  
+  // Cálculo con expresiones complejas
+  average = sum / limit;
+  
+  // Condicionales anidados
+  if (average > 0.0)
+  {
+    print("Promedio positivo: ", average);
+    
+    if (average > 3.0)
+    {
+      print("Promedio alto");
+    }
+    else
+    {
+      print("Promedio bajo");
+    };
+  }
+  else
+  {
+    print("Promedio cero o negativo");
+  };
+  
+  // Llamadas a funciones
+  sumNumbers(10);
+  checkRange(7, 1, 10);
+  checkRange(15, 1, 10);
+  
+  // Operaciones aritméticas complejas
+  counter = (5 + 3) * 2 - 1;
+  sum = 10.5 + 20.3 - 5.8;
+  
+  // Print con múltiples argumentos
+  print("Final: ", counter, " y ", sum);
+}
+end

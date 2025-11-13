@@ -1,0 +1,61 @@
+program recoveryTest;
+var a, b, c : int;
+    x, y : float;
+
+void testFunc(p : int)
+[ var local : int;
+  
+  { // Error en asignación - se recupera en ;
+    local = 10 * * 5;
+    
+    // Statement válido después del error
+    print("Continuando...");
+  }
+];
+
+void anotherFunc(q : float
+[ // Error: falta paréntesis de cierre en parámetros
+  var temp : float;
+  
+  { temp = q + 1.0;
+    print(temp);
+  }
+];
+
+main 
+{ a = 5;
+  b = 10;
+  
+  // Error en expresión de asignación
+  c = a + ;
+  
+  // Se recupera y continúa
+  print("Después del error 1");
+  
+  // Error en condición if
+  if (a > 
+  {
+    print("En if");
+  };
+  
+  // Se recupera y continúa
+  b = 20;
+  
+  // Error en do-while
+  do {
+    print("En ciclo");
+    // Error en print
+    print(a, , b);
+  } while (a < b);
+  
+  // Se recupera y continúa
+  print("Después del ciclo");
+  
+  // Error en llamada a función
+  testFunc(5, , 3);
+  
+  // Statement válido al final
+  c = a * b;
+  print("Fin: ", c);
+}
+end
