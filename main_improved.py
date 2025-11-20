@@ -1,7 +1,11 @@
-#############################################
-#   LEXER Y PARSER - VERSIÓN MEJORADA
+
+#Jose Daniel Cantú Cantú A01284664
+#Esteban Aleman A01285086
+#Noviembre 12 2025
+#   LEXER Y PARSER - 
+#   COMPILADOR LITTLE DUCK
 #   Usando la documentacion de PLY para error recovery
-#############################################
+
 
 import ply.lex as lex
 import ply.yacc as yacc
@@ -134,7 +138,6 @@ precedence = (
     ('left', 'OP_EQ', 'OP_NEQ', 'OP_LT', 'OP_GT', 'OP_LEQ', 'OP_GEQ'), 
     ('left', 'OP_SUMA', 'OP_RESTA'),
     ('left', 'OP_MULT', 'OP_DIV'),
-    ('right', 'UMINUS'),
 )
 
 start = 'program'
@@ -146,6 +149,10 @@ def p_program(p):
     p[0] = ('program', p[2], p[4], p[5], p[7])
 
 # VARS
+def p_vars_empty(p):
+    '''vars : empty'''
+    p[0] = []
+
 def p_vars_first(p):
     '''vars : VAR var_list'''
     p[0] = p[2]
@@ -337,32 +344,59 @@ def p_termino_factor(p):
     '''termino : factor'''
     p[0] = p[1]
 
-def p_factor_group(p):
-    '''factor : LPAREN expression RPAREN'''
-    p[0] = p[2]
+# Factor ahora apunta a signed_factor para controlar niveles de signos
+def p_factor(p):
+    '''factor : signed_factor'''
+    p[0] = p[1]
 
-def p_factor_sign_minus(p):
-    '''factor : OP_RESTA factor %prec UMINUS'''
+# Signed_factor permite máximo 2 operadores unarios
+def p_signed_factor_double_minus(p):
+    '''signed_factor : OP_RESTA OP_RESTA base_factor'''
+    p[0] = ('uminus', ('uminus', p[3]))
+
+def p_signed_factor_double_plus(p):
+    '''signed_factor : OP_SUMA OP_SUMA base_factor'''
+    p[0] = ('uplus', ('uplus', p[3]))
+
+def p_signed_factor_minus_plus(p):
+    '''signed_factor : OP_RESTA OP_SUMA base_factor'''
+    p[0] = ('uminus', ('uplus', p[3]))
+
+def p_signed_factor_plus_minus(p):
+    '''signed_factor : OP_SUMA OP_RESTA base_factor'''
+    p[0] = ('uplus', ('uminus', p[3]))
+
+def p_signed_factor_single_minus(p):
+    '''signed_factor : OP_RESTA base_factor'''
     p[0] = ('uminus', p[2])
 
-def p_factor_sign_plus(p):
-    '''factor : OP_SUMA factor %prec UMINUS'''
+def p_signed_factor_single_plus(p):
+    '''signed_factor : OP_SUMA base_factor'''
     p[0] = ('uplus', p[2])
 
-def p_factor_id(p):
-    '''factor : ID'''
+def p_signed_factor_no_sign(p):
+    '''signed_factor : base_factor'''
+    p[0] = p[1]
+
+# Base_factor son los valores básicos sin signo
+def p_base_factor_group(p):
+    '''base_factor : LPAREN expression RPAREN'''
+    p[0] = p[2]
+
+def p_base_factor_id(p):
+    '''base_factor : ID'''
     p[0] = ('id', p[1])
 
-def p_factor_int(p):
-    '''factor : CONST_INT'''
+def p_base_factor_int(p):
+    '''base_factor : CONST_INT'''
     p[0] = ('int', p[1])
 
-def p_factor_float(p):
-    '''factor : CONST_FLOAT'''
+def p_base_factor_float(p):
+    '''base_factor : CONST_FLOAT'''
     p[0] = ('float', p[1])
 
-def p_factor_string(p):
-    '''factor : CONST_STRING'''
+def p_base_factor_string(p):
+    '''base_factor : CONST_STRING'''
     p[0] = ('string', p[1])
 
 def p_print(p):
@@ -419,7 +453,7 @@ def p_empty(p):
     pass
 
 ###############################################################
-#  ERROR RECOVERY - PRÁCTICAS DE PLY
+#  Manejo de errores en el parser
 ###############################################################
 
 # REGLA 1: Error general en statements - Sincroniza en ; (MÁS IMPORTANTE)
@@ -556,7 +590,7 @@ def analizar_archivo(filename):
     parser_errors = []
 
     print("="*70)
-    print(f"📄 ANALIZANDO ARCHIVO: {filename}")
+    print(f" ANALIZANDO ARCHIVO: {filename}")
     print("="*70)
 
     try:
@@ -569,7 +603,7 @@ def analizar_archivo(filename):
         print(f"❌ ERROR al leer archivo: {e}")
         return False
 
-    print("\n📝 CÓDIGO FUENTE:")
+    print("\n CÓDIGO FUENTE:")
     print("-"*70)
     for i, linea in enumerate(codigo.split('\n'), 1):
         print(f"{i:3d} | {linea}")
@@ -580,7 +614,7 @@ def analizar_archivo(filename):
     file_lexer.lineno = 1
 
     # Análisis léxico
-    print("\n🔍 ANÁLISIS LÉXICO:")
+    print("\n ANÁLISIS LÉXICO:")
     print("-"*70)
     file_lexer.input(codigo)
     tokens_list = []
@@ -608,10 +642,16 @@ def analizar_archivo(filename):
 
     # Reporte final
     print("\n" + "="*70)
-    print("📊 REPORTE FINAL")
+    print("REPORTE FINAL")
     print("="*70)
 
-    total_errores = len(lexer_errors) + len(parser_errors)
+    # Separar errores reales de mensajes de recuperación
+    errores_reales = [err for err in parser_errors if not err.startswith("⚠️ RECUPERACIÓN")]
+    mensajes_recuperacion = [err for err in parser_errors if err.startswith("⚠️ RECUPERACIÓN")]
+
+    # Eliminar errores léxicos duplicados
+    lexer_errors_unicos = list(dict.fromkeys(lexer_errors))
+    total_errores = len(lexer_errors_unicos) + len(errores_reales)
 
     if total_errores == 0:
         print("✅ ¡PROGRAMA VÁLIDO! No se encontraron errores")
@@ -619,12 +659,14 @@ def analizar_archivo(filename):
         return True
     else:
         print(f"❌ Se encontraron {total_errores} errores en total:")
-        print(f"   - Errores léxicos: {len(lexer_errors)}")
-        print(f"   - Errores sintácticos: {len(parser_errors)}")
-        print("\n📋 Lista de errores:")
-        for err in lexer_errors + parser_errors:
+        print(f"   - Errores léxicos: {len(lexer_errors_unicos)}")
+        print(f"   - Errores sintácticos: {len(errores_reales)}")
+        print("\n Lista de errores:")
+        # Mostrar solo los errores reales, no los mensajes de recuperación
+        for err in lexer_errors_unicos + errores_reales:
             print(f"   • {err}")
         return False
+
 
 def analizar_codigo_directo(codigo, nombre="código"):
     """Analiza código directamente sin archivo"""
@@ -633,10 +675,10 @@ def analizar_codigo_directo(codigo, nombre="código"):
     parser_errors = []
 
     print("="*70)
-    print(f"📄 ANALIZANDO: {nombre}")
+    print(f"ANALIZANDO: {nombre}")
     print("="*70)
 
-    print("\n📝 CÓDIGO:")
+    print("\nCÓDIGO:")
     print("-"*70)
     print(codigo)
     print("-"*70)
@@ -646,33 +688,35 @@ def analizar_codigo_directo(codigo, nombre="código"):
     test_lexer.lineno = 1
     resultado = parser.parse(codigo, lexer=test_lexer)
 
-    total_errores = len(lexer_errors) + len(parser_errors)
+    # Separar errores reales de mensajes de recuperación
+    errores_reales = [err for err in parser_errors if not err.startswith("⚠️ RECUPERACIÓN")]
+    total_errores = len(lexer_errors) + len(errores_reales)
 
     if total_errores == 0:
         print("\n✅ ¡CÓDIGO VÁLIDO!")
         return True
     else:
-        print(f"\n❌ Errores encontrados: {total_errores}")
+        print(f"\n Errores encontrados: {total_errores}")
         return False
+
 
 ###############################################################
 #                    EJEMPLOS Y PRUEBAS
 ###############################################################
 
 if __name__ == "__main__":
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("COMPILADOR LITTLE DUCK")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
-    # Verificar si se proporcionó un argumento con el nombre del archivo
-    if len(sys.argv) < 2:
-        print("❌ ERROR: Debes proporcionar el nombre del archivo a analizar")
-        print("\nUso: python3 main_improved.py <nombre_archivo>")
-        print("\nEjemplo: python3 main_improved.py factorial.txt")
-        sys.exit(1)
-    
-    # Obtener el nombre del archivo del argumento
-    nombre_archivo = sys.argv[1]
-    
-    # Analizar el archivo proporcionado
-    analizar_archivo(nombre_archivo)
+    # Verificar si se proporcionó un archivo como argumento
+    if len(sys.argv) > 1:
+        # Usar el archivo pasado como argumento
+        archivo = sys.argv[1]
+        analizar_archivo(archivo)
+    else:
+        # Si no se proporciona argumento, usar archivo por defecto
+        print("Uso: python main.py <archivo.txt>")
+        print("Ejemplo: python main.py factorial.txt")
+        print("\nUsando archivo por defecto: test_doble_negativo.txt\n")
+        analizar_archivo('test_doble_negativo.txt')
