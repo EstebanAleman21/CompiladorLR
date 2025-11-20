@@ -1,0 +1,28 @@
+program nestedtest;
+
+var 
+    a, b, c : int ;
+    result : float ;
+main {
+    
+    a = 5;
+    b = 10;
+    c = 15;
+    
+    if (a < b)
+    {
+        if (b < c)
+        {
+            result = a + b + c;
+        }
+        else
+        {
+            result = a * b;
+        };
+    }
+    else
+    {
+        result = c;
+    };
+
+} end

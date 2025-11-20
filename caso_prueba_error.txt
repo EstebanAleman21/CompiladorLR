@@ -1,0 +1,18 @@
+program errortest;
+
+var 
+    x, y : int ;
+    z : float ;
+main {
+    
+    x = 10;
+    y = 5;
+    
+    w = x + y;
+    
+    if (x > y)
+    {
+        z = x / y;
+    };
+
+} end

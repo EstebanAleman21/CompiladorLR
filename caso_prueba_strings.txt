@@ -1,0 +1,17 @@
+program strings;
+
+var 
+    mensaje, saludo : string ;
+    nombre : string ;
+    numero : int ;
+main {
+    
+    mensaje = "Hola";
+    numero = 3;
+    nombre = "Mundo";
+    
+    saludo = mensaje + " " + nombre;
+    
+    mensaje = "abc" * numero;
+
+} end

@@ -1,0 +1,19 @@
+program stringops;
+
+var 
+    texto : string ;
+    num : int ;
+    resultado : string ;
+main {
+    
+    texto = "Python";
+    num = 5;
+    
+    resultado = texto + " " + num;
+    
+    if (texto == "Python")
+    {
+        num = 10;
+    };
+
+} end

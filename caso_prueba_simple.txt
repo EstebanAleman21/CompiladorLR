@@ -1,0 +1,16 @@
+program simple;
+
+var 
+    x, y, z : int ;
+main {
+    
+    x = 10;
+    y = 20;
+    z = x + y;
+    
+    if (z > 25)
+    {
+        x = z;
+    };
+
+} end

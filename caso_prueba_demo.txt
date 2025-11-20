@@ -1,0 +1,20 @@
+program demo;
+
+var 
+    x, y, z, resultado : int ;
+main {
+    
+    x = 10;
+    y = 5;
+    z = 3;
+    
+    if (x > y)
+    {
+        resultado = x * z;
+    }
+    else
+    {
+        resultado = y * z;
+    };
+
+} end
