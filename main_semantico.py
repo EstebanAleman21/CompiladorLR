@@ -557,13 +557,13 @@ def p_f_call_start(p):
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
     else:
-        operator_stack.append(('CALL', func_name, 0))
+        operator_stack.append(('GOSUB', func_name, 0))
 
 def p_f_call_end(p):
     '''f_call_end : '''
-    if len(operator_stack) > 0 and isinstance(operator_stack[-1], tuple) and operator_stack[-1][0] == 'CALL':
+    if len(operator_stack) > 0 and isinstance(operator_stack[-1], tuple) and operator_stack[-1][0] == 'GOSUB':
         _, func_name, param_count = operator_stack.pop()
-        
+
         if func_name in function_directory:
             expected_params = len(function_directory[func_name]['params'])
             if param_count != expected_params:
@@ -571,7 +571,7 @@ def p_f_call_end(p):
                 parser_errors.append(error_msg)
                 print(f"❌ {error_msg}")
             else:
-                add_quadruple('CALL', func_name, None, function_directory[func_name]['start_quad'])
+                add_quadruple('GOSUB', func_name, None, function_directory[func_name]['start_quad'])
 
 # PRINT
 def p_print_stmt(p):
@@ -593,11 +593,11 @@ def p_print_action(p):
         if len(type_stack) > 0:
             type_stack.pop()
         add_quadruple('PRINT', None, None, operand)
-    
+
     # Incrementar contador de parámetros si estamos en llamada a función
-    if len(operator_stack) > 0 and isinstance(operator_stack[-1], tuple) and operator_stack[-1][0] == 'CALL':
+    if len(operator_stack) > 0 and isinstance(operator_stack[-1], tuple) and operator_stack[-1][0] == 'GOSUB':
         _, func_name, count = operator_stack.pop()
-        operator_stack.append(('CALL', func_name, count + 1))
+        operator_stack.append(('GOSUB', func_name, count + 1))
         
         # Validar tipo de parámetro
         if func_name in function_directory:
@@ -764,7 +764,24 @@ def print_function_directory():
     for func_name, func_info in function_directory.items():
         print(f"\nFunción: {func_name}")
         print(f"  Tipo retorno: {func_info['type']}")
-        print(f"  Parámetros: {func_info['params']}")
+        print(f"  Parámetros:")
+        if func_info['params']:
+            for param_name, param_type in func_info['params']:
+                print(f"    - {param_name}: {param_type}")
+        else:
+            print(f"    (ninguno)")
+        print(f"  Variables internas:")
+        if func_name in symbol_table and symbol_table[func_name]:
+            for var_name, var_type in symbol_table[func_name].items():
+                # Solo mostrar variables que no son parámetros
+                param_names = [p[0] for p in func_info['params']]
+                if var_name not in param_names:
+                    print(f"    - {var_name}: {var_type}")
+            # Si solo hay parámetros, mostrar "ninguna"
+            if all(var_name in param_names for var_name in symbol_table[func_name].keys()):
+                print(f"    (ninguna)")
+        else:
+            print(f"    (ninguna)")
         print(f"  Cuádruplo inicial: {func_info['start_quad']}")
 
 def print_quadruples():
@@ -811,7 +828,25 @@ def save_intermediate_code(filename):
         for func_name, func_info in function_directory.items():
             f.write(f"\nFunción: {func_name}\n")
             f.write(f"  Tipo retorno: {func_info['type']}\n")
-            f.write(f"  Parámetros: {func_info['params']}\n")
+            f.write(f"  Parámetros:\n")
+            if func_info['params']:
+                for param_name, param_type in func_info['params']:
+                    f.write(f"    - {param_name}: {param_type}\n")
+            else:
+                f.write(f"    (ninguno)\n")
+            f.write(f"  Variables internas:\n")
+            if func_name in symbol_table and symbol_table[func_name]:
+                has_internal_vars = False
+                for var_name, var_type in symbol_table[func_name].items():
+                    # Solo mostrar variables que no son parámetros
+                    param_names = [p[0] for p in func_info['params']]
+                    if var_name not in param_names:
+                        f.write(f"    - {var_name}: {var_type}\n")
+                        has_internal_vars = True
+                if not has_internal_vars:
+                    f.write(f"    (ninguna)\n")
+            else:
+                f.write(f"    (ninguna)\n")
             f.write(f"  Cuádruplo inicial: {func_info['start_quad']}\n")
     
     print(f"\n✅ Código intermedio guardado en: {output_file}")
