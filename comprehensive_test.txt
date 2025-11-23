@@ -1,0 +1,58 @@
+program comprehensive_test;
+var global_x, global_y : int;
+    global_z : float;
+    message : string;
+
+void multiply(a : int, b : int)
+[ var result : int;
+  { result = a * b;
+    print("Multiplicacion: ", result);
+  }
+];
+
+void calculate(num : int)
+[ var temp : int;
+  { if (num > 5)
+    { temp = num * 2;
+      print("Mayor a 5, doble: ", temp);
+    }
+    else
+    { temp = num + 10;
+      print("Menor o igual a 5, mas 10: ", temp);
+    };
+  }
+];
+
+main
+{ global_x = 10;
+  global_y = 20;
+  global_z = 3.14;
+  message = "Hola Mundo";
+  
+  print("Inicio del programa");
+  print(message);
+  
+  multiply(global_x, global_y);
+  calculate(global_x);
+  
+  while (global_x < 15)
+  { print("Valor de x: ", global_x);
+    global_x = global_x + 1;
+  };
+  
+  do
+  { print("En do-while, y = ", global_y);
+    global_y = global_y - 5;
+  }while(global_y > 0);
+  
+  if (global_z > 2.0)
+  { print("Z es mayor a 2");
+    global_z = global_z / 2.0;
+  }
+  else
+  { print("Z es menor o igual a 2");
+  };
+  
+  print("Fin del programa");
+}
+end

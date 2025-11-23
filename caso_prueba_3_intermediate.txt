@@ -1,0 +1,119 @@
+======================================================================
+CÓDIGO INTERMEDIO - CUÁDRUPLOS
+======================================================================
+
+#     Operador   Operando1       Operando2       Resultado      
+----------------------------------------------------------------------
+0     =          1               -               i              
+1     =          0               -               total          
+2     +          total           i               t1             
+3     =          t1              -               total          
+4     +          i               1               t2             
+5     =          t2              -               i              
+6     <=         i               n               t3             
+7     GOTOT      t3              -               2              
+8     PRINT      -               -               "La suma es: " 
+9     PRINT      -               -               total          
+10    ENDFUNC    -               -               -              
+11    >=         value           min             t4             
+12    GOTOF      t4              -               21             
+13    <=         value           max             t5             
+14    GOTOF      t5              -               18             
+15    PRINT      -               -               "Valor en rango"
+16    =          1               -               inRange        
+17    GOTO       -               -               20             
+18    PRINT      -               -               "Valor muy grande"
+19    =          0               -               inRange        
+20    GOTO       -               -               23             
+21    PRINT      -               -               "Valor muy pequeño"
+22    =          0               -               inRange        
+23    ENDFUNC    -               -               -              
+24    =          0               -               counter        
+25    =          5               -               limit          
+26    =          0.0             -               sum            
+27    =          0.0             -               average        
+28    +          counter         1               t6             
+29    =          t6              -               counter        
+30    +          sum             counter         t7             
+31    =          t7              -               sum            
+32    PRINT      -               -               "Iteración: "  
+33    PRINT      -               -               counter        
+34    <          counter         limit           t8             
+35    GOTOT      t8              -               28             
+36    /          sum             limit           t9             
+37    =          t9              -               average        
+38    >          average         0.0             t10            
+39    GOTOF      t10             -               48             
+40    PRINT      -               -               "Promedio positivo: "
+41    PRINT      -               -               average        
+42    >          average         3.0             t11            
+43    GOTOF      t11             -               46             
+44    PRINT      -               -               "Promedio alto"
+45    GOTO       -               -               47             
+46    PRINT      -               -               "Promedio bajo"
+47    GOTO       -               -               49             
+48    PRINT      -               -               "Promedio cero o negativo"
+49    PRINT      -               -               10             
+50    CALL       sumNumbers      -               0              
+51    PRINT      -               -               7              
+52    PRINT      -               -               1              
+53    PRINT      -               -               10             
+54    CALL       checkRange      -               11             
+55    PRINT      -               -               15             
+56    PRINT      -               -               1              
+57    PRINT      -               -               10             
+58    CALL       checkRange      -               11             
+59    +          5               3               t12            
+60    *          t12             2               t13            
+61    -          t13             1               t14            
+62    =          t14             -               counter        
+63    -          20.3            5.8             t15            
+64    +          10.5            t15             t16            
+65    =          t16             -               sum            
+66    PRINT      -               -               "Final: "      
+67    PRINT      -               -               counter        
+68    PRINT      -               -               " y "          
+69    PRINT      -               -               sum            
+70    END        -               -               -              
+
+======================================================================
+TABLA DE SÍMBOLOS
+======================================================================
+
+Scope: global
+Variable        Tipo      
+----------------------------------------------------------------------
+message         string    
+average         float     
+sum             float     
+counter         int       
+limit           int       
+
+Scope: sumNumbers
+Variable        Tipo      
+----------------------------------------------------------------------
+n               int       
+i               int       
+total           int       
+
+Scope: checkRange
+Variable        Tipo      
+----------------------------------------------------------------------
+max             int       
+min             int       
+value           int       
+inRange         int       
+
+======================================================================
+DIRECTORIO DE FUNCIONES
+======================================================================
+
+Función: sumNumbers
+  Tipo retorno: void
+  Parámetros: [('n', 'int')]
+  Cuádruplo inicial: 0
+
+Función: checkRange
+  Tipo retorno: void
+  Parámetros: [('value', 'int'), ('min', 'int'), ('max', 'int')]
+  Cuádruplo inicial: 11

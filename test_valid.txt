@@ -1,0 +1,32 @@
+program test;
+var x, y : int;
+    z : float;
+
+void sum(a : int, b : int)
+[ var result : int;
+  { result = a + b;
+    print("Suma: ", result);
+  }
+];
+
+main
+{ x = 5;
+  y = 10;
+  z = 3.14;
+  
+  if (x < y)
+  { print("x es menor que y");
+    sum(x, y);
+  }
+  else
+  { print("x no es menor");
+  };
+  
+  while (x < 8)
+  { print(x);
+    x = x + 1;
+  };
+  
+  print("Fin del programa");
+}
+end

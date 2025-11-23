@@ -8,7 +8,7 @@ void fact (n : int, a : int)
 
    {  if (n > 1 )
       {  b = a * n;
-         fact (n-1, b);
+         fact (n-1, b);  
       }
       else
       {  print(a);   }; 
@@ -40,7 +40,7 @@ main
     }while( 3 < 5 / 1.5  );
 
 
-    if ( 3 >=  8)
+    if ( 3 >= 8)
     {
       print("texto ");
       n = 58 + 9 * 5;

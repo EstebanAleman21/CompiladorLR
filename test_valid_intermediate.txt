@@ -1,0 +1,57 @@
+======================================================================
+CÓDIGO INTERMEDIO - CUÁDRUPLOS
+======================================================================
+
+#     Operador   Operando1       Operando2       Resultado      
+----------------------------------------------------------------------
+0     +          a               b               t1             
+1     =          t1              -               result         
+2     PRINT      -               -               "Suma: "       
+3     PRINT      -               -               result         
+4     ENDFUNC    -               -               -              
+5     =          5               -               x              
+6     =          10              -               y              
+7     =          3.14            -               z              
+8     <          x               y               t2             
+9     GOTOF      t2              -               15             
+10    PRINT      -               -               "x es menor que y"
+11    PRINT      -               -               x              
+12    PRINT      -               -               y              
+13    CALL       sum             -               0              
+14    GOTO       -               -               16             
+15    PRINT      -               -               "x no es menor"
+16    <          x               8               t3             
+17    GOTOF      t3              -               22             
+18    PRINT      -               -               x              
+19    +          x               1               t4             
+20    =          t4              -               x              
+21    GOTO       -               -               16             
+22    PRINT      -               -               "Fin del programa"
+23    END        -               -               -              
+
+======================================================================
+TABLA DE SÍMBOLOS
+======================================================================
+
+Scope: global
+Variable        Tipo      
+----------------------------------------------------------------------
+z               float     
+x               int       
+y               int       
+
+Scope: sum
+Variable        Tipo      
+----------------------------------------------------------------------
+b               int       
+a               int       
+result          int       
+
+======================================================================
+DIRECTORIO DE FUNCIONES
+======================================================================
+
+Función: sum
+  Tipo retorno: void
+  Parámetros: [('a', 'int'), ('b', 'int')]
+  Cuádruplo inicial: 0
