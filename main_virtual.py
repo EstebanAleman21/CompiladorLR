@@ -1297,7 +1297,7 @@ class VirtualMachine:
             # Remover comillas de strings
             if isinstance(val, str) and val.startswith('"') and val.endswith('"'):
                 val = val[1:-1]
-            print(val, end='')
+            print(val)
             self.output.append(str(val))
 
         # ================== TERMINACIÓN ==================
