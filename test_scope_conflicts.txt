@@ -1,0 +1,100 @@
+program scopeTest;
+var global_x : int;
+    global_y : float;
+    message : string;
+
+void firstFunction(param1 : int, param2 : int)
+[ var local_a : int;
+    local_b : float;
+    param1 : string;  // Error 1: Redeclaration of parameter as variable
+
+  { local_a = param1 + param2;
+
+    // Valid operation
+    local_b = param1 * 2.5;
+    print("First function result: ", local_a);
+  }
+];
+
+void secondFunction(x : int)
+[ var x : float;  // Error 3: Parameter name conflicts with variable
+    y : int;
+    y : string;   // Error 4: Variable declared twice
+
+  { // Error 5: Trying to use variable from another function's scope
+    local_a = x + 10;
+
+    // Error 6: Using parameter from another function
+    y = param1 * 2;
+
+    // Valid: accessing global variable
+    global_x = x + 5;
+
+    // Error 7: Assigning wrong type to global
+    global_y = "wrong type";
+
+    print("Second function");
+  }
+];
+
+void thirdFunction(num : int)
+[ var counter : int;
+
+  { counter = 0;
+
+    while (counter < num)
+    {
+      counter = counter + 1;
+
+      // Error 8: Accessing variable from sibling function scope
+      print("Value: ", local_b);
+    };
+  }
+];
+
+void duplicateFunc(a : int)
+[ var temp : int;
+  { temp = a * 2;
+    print(temp);
+  }
+];
+
+// Error 10: Function declared twice
+void duplicateFunc(b : float)
+[ var result : float;
+  { result = b + 1.0;
+    print(result);
+  }
+];
+
+void paramConflict(value : int, value : float)  // Error 11: Parameter declared twice
+[ var local : int;
+  { local = value;
+    print(local);
+  }
+];
+
+main
+{ global_x = 100;
+  global_y = 3.14;
+  message = "Testing scopes";
+
+  // Error 12: Trying to access function's local variable
+  local_a = 50;
+
+  // Error 13: Trying to access function parameter from main
+  param1 = 25;
+
+  // Valid: calling functions
+  firstFunction(10, 20);
+  secondFunction(global_x);
+
+  // Error 14: Accessing variable that only exists in function scope
+  print("Local b value: ", local_b);
+
+  thirdFunction(5);
+  duplicateFunc(global_x);
+
+  print("End of scope test");
+}
+end

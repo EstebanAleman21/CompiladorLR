@@ -1,0 +1,23 @@
+%%CONSTANTS
+int:10=11000,0=11001
+string:"Result: "=13000
+
+%%FUNCTIONS
+
+%%QUADRUPLES
+0:GOTO:-:-:1
+1:=:11000:-:1000
+2:=:11001:-:1001
+3:/:1000:1001:8000
+4:=:8000:-:2000
+5:PRINT:-:-:13000
+6:PRINT:-:-:2000
+7:END:-:-:-
+
+%%MEMORY_COUNTERS
+global:int=2,float=1,string=0
+local:int=0,float=0,string=0
+temp:int=0,float=1,string=0,bool=0
+const:int=2,float=0,string=1
+
+%%END

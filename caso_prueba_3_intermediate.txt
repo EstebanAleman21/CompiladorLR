@@ -1,119 +1,93 @@
-======================================================================
-CÓDIGO INTERMEDIO - CUÁDRUPLOS
-======================================================================
+%%CONSTANTS
+int:1=11000,0=11001,5=11002,10=11003,7=11004,15=11005,3=11006,2=11007
+float:0.0=12000,3.0=12001,10.5=12002,20.3=12003,5.8=12004
+string:"La suma es: "=13000,"Valor en rango"=13001,"Valor muy grande"=13002,"Valor muy pequeño"=13003,"Iteración: "=13004,"Promedio positivo: "=13005,"Promedio alto"=13006,"Promedio bajo"=13007,"Promedio cero o negativo"=13008,"Final: "=13009," y "=13010
 
-#     Operador   Operando1       Operando2       Resultado      
-----------------------------------------------------------------------
-0     =          1               -               i              
-1     =          0               -               total          
-2     +          total           i               t1             
-3     =          t1              -               total          
-4     +          i               1               t2             
-5     =          t2              -               i              
-6     <=         i               n               t3             
-7     GOTOT      t3              -               2              
-8     PRINT      -               -               "La suma es: " 
-9     PRINT      -               -               total          
-10    ENDFUNC    -               -               -              
-11    >=         value           min             t4             
-12    GOTOF      t4              -               21             
-13    <=         value           max             t5             
-14    GOTOF      t5              -               18             
-15    PRINT      -               -               "Valor en rango"
-16    =          1               -               inRange        
-17    GOTO       -               -               20             
-18    PRINT      -               -               "Valor muy grande"
-19    =          0               -               inRange        
-20    GOTO       -               -               23             
-21    PRINT      -               -               "Valor muy pequeño"
-22    =          0               -               inRange        
-23    ENDFUNC    -               -               -              
-24    =          0               -               counter        
-25    =          5               -               limit          
-26    =          0.0             -               sum            
-27    =          0.0             -               average        
-28    +          counter         1               t6             
-29    =          t6              -               counter        
-30    +          sum             counter         t7             
-31    =          t7              -               sum            
-32    PRINT      -               -               "Iteración: "  
-33    PRINT      -               -               counter        
-34    <          counter         limit           t8             
-35    GOTOT      t8              -               28             
-36    /          sum             limit           t9             
-37    =          t9              -               average        
-38    >          average         0.0             t10            
-39    GOTOF      t10             -               48             
-40    PRINT      -               -               "Promedio positivo: "
-41    PRINT      -               -               average        
-42    >          average         3.0             t11            
-43    GOTOF      t11             -               46             
-44    PRINT      -               -               "Promedio alto"
-45    GOTO       -               -               47             
-46    PRINT      -               -               "Promedio bajo"
-47    GOTO       -               -               49             
-48    PRINT      -               -               "Promedio cero o negativo"
-49    PRINT      -               -               10             
-50    CALL       sumNumbers      -               0              
-51    PRINT      -               -               7              
-52    PRINT      -               -               1              
-53    PRINT      -               -               10             
-54    CALL       checkRange      -               11             
-55    PRINT      -               -               15             
-56    PRINT      -               -               1              
-57    PRINT      -               -               10             
-58    CALL       checkRange      -               11             
-59    +          5               3               t12            
-60    *          t12             2               t13            
-61    -          t13             1               t14            
-62    =          t14             -               counter        
-63    -          20.3            5.8             t15            
-64    +          10.5            t15             t16            
-65    =          t16             -               sum            
-66    PRINT      -               -               "Final: "      
-67    PRINT      -               -               counter        
-68    PRINT      -               -               " y "          
-69    PRINT      -               -               sum            
-70    END        -               -               -              
+%%FUNCTIONS
+sumNumbers:void:1:n:int:4000
+checkRange:void:12:value:int:4002;min:int:4001;max:int:4000
 
-======================================================================
-TABLA DE SÍMBOLOS
-======================================================================
+%%QUADRUPLES
+0:GOTO:-:-:25
+1:=:11000:-:4001
+2:=:11001:-:4002
+3:+:4002:4001:7000
+4:=:7000:-:4002
+5:+:4001:11000:7001
+6:=:7001:-:4001
+7:<=:4001:4000:10000
+8:GOTOT:10000:-:3
+9:PRINT:-:-:13000
+10:PRINT:-:-:4002
+11:ENDFUNC:-:-:-
+12:>=:4002:4001:10001
+13:GOTOF:10001:-:22
+14:<=:4002:4000:10002
+15:GOTOF:10002:-:19
+16:PRINT:-:-:13001
+17:=:11000:-:4003
+18:GOTO:-:-:21
+19:PRINT:-:-:13002
+20:=:11001:-:4003
+21:GOTO:-:-:24
+22:PRINT:-:-:13003
+23:=:11001:-:4003
+24:ENDFUNC:-:-:-
+25:=:11001:-:1000
+26:=:11002:-:1001
+27:=:12000:-:2001
+28:=:12000:-:2000
+29:+:1000:11000:7002
+30:=:7002:-:1000
+31:+:2001:1000:8000
+32:=:8000:-:2001
+33:PRINT:-:-:13004
+34:PRINT:-:-:1000
+35:<:1000:1001:10003
+36:GOTOT:10003:-:29
+37:/:2001:1001:8001
+38:=:8001:-:2000
+39:>:2000:12000:10004
+40:GOTOF:10004:-:49
+41:PRINT:-:-:13005
+42:PRINT:-:-:2000
+43:>:2000:12001:10005
+44:GOTOF:10005:-:47
+45:PRINT:-:-:13006
+46:GOTO:-:-:48
+47:PRINT:-:-:13007
+48:GOTO:-:-:50
+49:PRINT:-:-:13008
+50:ERA:sumNumbers:-:-
+51:PARAM:11003:-:4000
+52:GOSUB:sumNumbers:-:1
+53:ERA:checkRange:-:-
+54:PARAM:11004:-:4002
+55:PARAM:11000:-:4001
+56:PARAM:11003:-:4000
+57:GOSUB:checkRange:-:12
+58:ERA:checkRange:-:-
+59:PARAM:11005:-:4002
+60:PARAM:11000:-:4001
+61:PARAM:11003:-:4000
+62:GOSUB:checkRange:-:12
+63:+:11002:11006:7003
+64:*:7003:11007:7004
+65:-:7004:11000:7005
+66:=:7005:-:1000
+67:-:12003:12004:8002
+68:+:12002:8002:8003
+69:=:8003:-:2001
+70:PRINT:-:-:13009
+71:PRINT:-:-:1000
+72:PRINT:-:-:13010
+73:PRINT:-:-:2001
+74:END:-:-:-
 
-Scope: global
-Variable        Tipo      
-----------------------------------------------------------------------
-message         string    
-average         float     
-sum             float     
-counter         int       
-limit           int       
+%%MEMORY_COUNTERS
+global:int=2,float=2,string=1
+local:int=4,float=0,string=0
+temp:int=6,float=4,string=0,bool=6
+const:int=8,float=5,string=11
 
-Scope: sumNumbers
-Variable        Tipo      
-----------------------------------------------------------------------
-n               int       
-i               int       
-total           int       
-
-Scope: checkRange
-Variable        Tipo      
-----------------------------------------------------------------------
-max             int       
-min             int       
-value           int       
-inRange         int       
-
-======================================================================
-DIRECTORIO DE FUNCIONES
-======================================================================
-
-Función: sumNumbers
-  Tipo retorno: void
-  Parámetros: [('n', 'int')]
-  Cuádruplo inicial: 0
-
-Función: checkRange
-  Tipo retorno: void
-  Parámetros: [('value', 'int'), ('min', 'int'), ('max', 'int')]
-  Cuádruplo inicial: 11
+%%END

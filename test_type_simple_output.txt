@@ -1,0 +1,104 @@
+✅ Lexer construido correctamente
+✅ Parser con análisis semántico construido correctamente
+
+======================================================================
+COMPILADOR LITTLE DUCK - ANÁLISIS SEMÁNTICO
+======================================================================
+
+======================================================================
+ ANALIZANDO ARCHIVO: test_type_simple.txt
+======================================================================
+
+ CÓDIGO FUENTE:
+----------------------------------------------------------------------
+  1 | program typeTest;
+  2 | var i1, i2 : int;
+  3 |     f1, f2 : float;
+  4 |     s1, s2 : string;
+  5 | 
+  6 | void mixedTypes(ip : int, fp : float)
+  7 | [ var result : int;
+  8 |     fresult : float;
+  9 | 
+ 10 |   { // Error 1: String divided by int
+ 11 |     fresult = s1 / i1;
+ 12 | 
+ 13 |     // Error 2: Subtraction not valid for strings
+ 14 |     s1 = s1 - s2;
+ 15 | 
+ 16 |     // Error 3: Boolean result to int variable
+ 17 |     result = ip > fp;
+ 18 | 
+ 19 |     // Error 4: String compared with int
+ 20 |     if (i1 == s1)
+ 21 |     {
+ 22 |       print("Wrong comparison");
+ 23 |     };
+ 24 | 
+ 25 |     // Error 5: Non-boolean in while
+ 26 |     while (result)
+ 27 |     {
+ 28 |       result = result - 1;
+ 29 |     };
+ 30 | 
+ 31 |     // Valid operations
+ 32 |     fresult = ip + fp;
+ 33 |     s1 = s1 + s2;
+ 34 |     print("Done");
+ 35 |   }
+ 36 | ];
+ 37 | 
+ 38 | main
+ 39 | { i1 = 10;
+ 40 |   f1 = 3.14;
+ 41 |   s1 = "test";
+ 42 | 
+ 43 |   // Error 6: Undeclared variable
+ 44 |   unknown = 5;
+ 45 | 
+ 46 |   // Error 7: Type mismatch int = string
+ 47 |   i1 = s1;
+ 48 | 
+ 49 |   // Error 8: Wrong param count
+ 50 |   mixedTypes(i1);
+ 51 | 
+ 52 |   // Error 9: Wrong param types
+ 53 |   mixedTypes(s1, i1);
+ 54 | 
+ 55 |   // Error 10: Undefined function
+ 56 |   badFunc(i1);
+ 57 | 
+ 58 |   // Error 11: Non-boolean in do-while
+ 59 |   do {
+ 60 |     i1 = i1 + 1;
+ 61 |   } while (i1 + f1);
+ 62 | 
+ 63 |   // Valid call
+ 64 |   mixedTypes(i1, f1);
+ 65 | 
+ 66 |   print("End");
+ 67 | }
+ 68 | end
+ 69 | 
+----------------------------------------------------------------------
+
+🔍 ANÁLISIS LÉXICO, SINTÁCTICO Y SEMÁNTICO:
+----------------------------------------------------------------------
+❌ ERROR SEMÁNTICO: Operación '/' no válida entre tipos 'string' y 'int'
+❌ ERROR SEMÁNTICO: Operación '-' no válida entre tipos 'string' y 'string'
+❌ ERROR SEMÁNTICO: Operación '=' no válida entre tipos 'int' y 'bool'
+❌ ERROR SEMÁNTICO: Operación '==' no válida entre tipos 'int' y 'string'
+❌ ERROR SEMÁNTICO: La condición del ciclo debe ser booleana, se recibió 'int'
+❌ ERROR SEMÁNTICO: Variable 'unknown' no declarada
+❌ ERROR SEMÁNTICO: Operación '=' no válida entre tipos 'int' y 'string'
+❌ ERROR SEMÁNTICO: Función 'mixedTypes' espera 2 parámetros, se pasaron 1
+❌ ERROR SEMÁNTICO: Función 'badFunc' no declarada
+❌ ERROR SEMÁNTICO: La condición del ciclo debe ser booleana, se recibió 'float'
+✅ Programa compilado exitosamente
+
+======================================================================
+REPORTE FINAL
+======================================================================
+❌ Se encontraron 10 errores en total:
+   - Errores léxicos: 0
+   - Errores semánticos: 10

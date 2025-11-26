@@ -1,0 +1,124 @@
+✅ Lexer construido correctamente
+✅ Parser con análisis semántico construido correctamente
+
+======================================================================
+COMPILADOR LITTLE DUCK - ANÁLISIS SEMÁNTICO
+======================================================================
+
+======================================================================
+ ANALIZANDO ARCHIVO: test_semantic_errors.txt
+======================================================================
+
+ CÓDIGO FUENTE:
+----------------------------------------------------------------------
+  1 | program semanticTest;
+  2 | var x, y, z : int;
+  3 |     temperature : float;
+  4 |     name : string;
+  5 | 
+  6 | void processData(value : int, factor : float)
+  7 | [ var local_result : int;
+  8 |     temp_val : float;
+  9 | 
+ 10 |   { // Error 1: Type mismatch - assigning float to int variable
+ 11 |     local_result = value * factor;
+ 12 | 
+ 13 |     // Error 2: Using undeclared variable
+ 14 |     unknown_var = 10;
+ 15 | 
+ 16 |     // Error 3: Wrong number of parameters in recursive call
+ 17 |     processData(value);
+ 18 | 
+ 19 |     // Error 4: Type mismatch in parameter
+ 20 |     processData("hello", 3.14);
+ 21 | 
+ 22 |     // Valid statement
+ 23 |     temp_val = value + factor;
+ 24 |     print("Temp value: ", temp_val);
+ 25 |   }
+ 26 | ];
+ 27 | 
+ 28 | void calculate(a : int, b : int, c : int)
+ 29 | [ var result : int;
+ 30 | 
+ 31 |   { // Error 5: Assigning string to int
+ 32 |     result = "invalid string";
+ 33 | 
+ 34 |     // Error 6: Boolean expression expected in if, but got int
+ 35 |     if (result)
+ 36 |     {
+ 37 |       print("This should fail");
+ 38 |     };
+ 39 | 
+ 40 |     // Valid calculation
+ 41 |     result = a + b * c;
+ 42 | 
+ 43 |     // Error 7: Non-boolean in while condition
+ 44 |     while (result)
+ 45 |     {
+ 46 |       result = result - 1;
+ 47 |     };
+ 48 |   }
+ 49 | ];
+ 50 | 
+ 51 | main
+ 52 | { x = 5;
+ 53 |   y = 10;
+ 54 |   temperature = 98.6;
+ 55 | 
+ 56 |   // Error 8: Variable not declared
+ 57 |   undefined_var = 100;
+ 58 | 
+ 59 |   // Error 9: Type mismatch - float to int
+ 60 |   x = temperature;
+ 61 | 
+ 62 |   // Error 10: Wrong parameter types
+ 63 |   calculate(x, temperature, y);
+ 64 | 
+ 65 |   // Error 11: Wrong number of parameters (too few)
+ 66 |   calculate(x, y);
+ 67 | 
+ 68 |   // Error 12: Wrong number of parameters (too many)
+ 69 |   processData(x, temperature, y, z);
+ 70 | 
+ 71 |   // Error 13: Function not declared
+ 72 |   unknownFunction(x, y);
+ 73 | 
+ 74 |   // Error 14: Boolean expected in do-while
+ 75 |   do {
+ 76 |     x = x + 1;
+ 77 |   } while (x + y);
+ 78 | 
+ 79 |   // Error 15: Complex type mismatch in expression
+ 80 |   z = x + "string" * temperature;
+ 81 | 
+ 82 |   // Valid call
+ 83 |   processData(x, temperature);
+ 84 | 
+ 85 |   print("End of test");
+ 86 | }
+ 87 | end
+ 88 | 
+----------------------------------------------------------------------
+
+🔍 ANÁLISIS LÉXICO, SINTÁCTICO Y SEMÁNTICO:
+----------------------------------------------------------------------
+❌ ERROR SEMÁNTICO: Variable 'unknown_var' no declarada
+❌ ERROR SEMÁNTICO: Función 'processData' espera 2 parámetros, se pasaron 1
+❌ ERROR SEMÁNTICO: Operación '=' no válida entre tipos 'int' y 'string'
+❌ ERROR SEMÁNTICO: La condición debe ser una expresión booleana, se recibió 'int'
+❌ ERROR SEMÁNTICO: La condición del ciclo debe ser booleana, se recibió 'int'
+❌ ERROR SEMÁNTICO: Variable 'undefined_var' no declarada
+❌ ERROR SEMÁNTICO: Función 'calculate' espera 3 parámetros, se pasaron 2
+❌ ERROR SEMÁNTICO: Función 'processData' espera 2 parámetros, se pasaron 4
+❌ ERROR SEMÁNTICO: Función 'unknownFunction' no declarada
+❌ ERROR SEMÁNTICO: La condición del ciclo debe ser booleana, se recibió 'int'
+❌ ERROR SEMÁNTICO: Operación '*' no válida entre tipos 'string' y 'float'
+✅ Programa compilado exitosamente
+
+======================================================================
+REPORTE FINAL
+======================================================================
+❌ Se encontraron 11 errores en total:
+   - Errores léxicos: 0
+   - Errores semánticos: 11

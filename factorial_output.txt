@@ -1,0 +1,83 @@
+✅ Lexer construido correctamente
+✅ Parser con análisis semántico construido correctamente
+
+======================================================================
+COMPILADOR LITTLE DUCK - ANÁLISIS SEMÁNTICO
+======================================================================
+
+======================================================================
+ ANALIZANDO ARCHIVO: factorial.txt
+======================================================================
+
+ CÓDIGO FUENTE:
+----------------------------------------------------------------------
+  1 | program proquacks;
+  2 | var n : int ;
+  3 |   j , i : float;
+  4 |   s : string; 
+  5 | 
+  6 | void fact (n : int, a : int)
+  7 | [  var b : int; 
+  8 | 
+  9 |    {  if (n > 1 )
+ 10 |       {  b = a * n;
+ 11 |          fact (n-1, b);  
+ 12 |       }
+ 13 |       else
+ 14 |       {  print(a);   }; 
+ 15 |    }
+ 16 | ];
+ 17 | 
+ 18 | 
+ 19 | void some_other( n : int )
+ 20 | [  var n : float;
+ 21 |    
+ 22 |    {  n = "woooooooooo 5"; 
+ 23 |       print("hello "); 
+ 24 |       xf = 7;
+ 25 | 
+ 26 |       fact(3, 1);
+ 27 |    } ]
+ 28 | ;
+ 29 | 
+ 30 | 
+ 31 | main 
+ 32 | {  n = 5;
+ 33 |    fact(n, 1);
+ 34 | 
+ 35 |    fact(n+1, 1);
+ 36 | 
+ 37 |     do {
+ 38 | 
+ 39 |       print(3, "w", 4+5, 4.5);
+ 40 |     }while( 3 < 5 / 1.5  );
+ 41 | 
+ 42 | 
+ 43 |     if ( 3 >= 8)
+ 44 |     {
+ 45 |       print("texto ");
+ 46 |       n = 58 + 9 * 5;
+ 47 |     }
+ 48 |     else
+ 49 |     {   print("xsxsxs", (5) );
+ 50 | 
+ 51 |     };
+ 52 | }
+ 53 | end
+ 54 | 
+ 55 | 
+----------------------------------------------------------------------
+
+🔍 ANÁLISIS LÉXICO, SINTÁCTICO Y SEMÁNTICO:
+----------------------------------------------------------------------
+❌ ERROR SEMÁNTICO: Variable 'n' ya declarada en scope 'some_other'
+❌ ERROR SEMÁNTICO: Operación '=' no válida entre tipos 'int' y 'string'
+❌ ERROR SEMÁNTICO: Variable 'xf' no declarada
+✅ Programa compilado exitosamente
+
+======================================================================
+REPORTE FINAL
+======================================================================
+❌ Se encontraron 3 errores en total:
+   - Errores léxicos: 0
+   - Errores semánticos: 3

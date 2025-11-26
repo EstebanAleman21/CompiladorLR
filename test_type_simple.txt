@@ -1,0 +1,68 @@
+program typeTest;
+var i1, i2 : int;
+    f1, f2 : float;
+    s1, s2 : string;
+
+void mixedTypes(ip : int, fp : float)
+[ var result : int;
+    fresult : float;
+
+  { // Error 1: String divided by int
+    fresult = s1 / i1;
+
+    // Error 2: Subtraction not valid for strings
+    s1 = s1 - s2;
+
+    // Error 3: Boolean result to int variable
+    result = ip > fp;
+
+    // Error 4: String compared with int
+    if (i1 == s1)
+    {
+      print("Wrong comparison");
+    };
+
+    // Error 5: Non-boolean in while
+    while (result)
+    {
+      result = result - 1;
+    };
+
+    // Valid operations
+    fresult = ip + fp;
+    s1 = s1 + s2;
+    print("Done");
+  }
+];
+
+main
+{ i1 = 10;
+  f1 = 3.14;
+  s1 = "test";
+
+  // Error 6: Undeclared variable
+  unknown = 5;
+
+  // Error 7: Type mismatch int = string
+  i1 = s1;
+
+  // Error 8: Wrong param count
+  mixedTypes(i1);
+
+  // Error 9: Wrong param types
+  mixedTypes(s1, i1);
+
+  // Error 10: Undefined function
+  badFunc(i1);
+
+  // Error 11: Non-boolean in do-while
+  do {
+    i1 = i1 + 1;
+  } while (i1 + f1);
+
+  // Valid call
+  mixedTypes(i1, f1);
+
+  print("End");
+}
+end

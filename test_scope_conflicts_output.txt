@@ -1,0 +1,138 @@
+✅ Lexer construido correctamente
+✅ Parser con análisis semántico construido correctamente
+
+======================================================================
+COMPILADOR LITTLE DUCK - ANÁLISIS SEMÁNTICO
+======================================================================
+
+======================================================================
+ ANALIZANDO ARCHIVO: test_scope_conflicts.txt
+======================================================================
+
+ CÓDIGO FUENTE:
+----------------------------------------------------------------------
+  1 | program scopeTest;
+  2 | var global_x : int;
+  3 |     global_y : float;
+  4 |     message : string;
+  5 | 
+  6 | void firstFunction(param1 : int, param2 : int)
+  7 | [ var local_a : int;
+  8 |     local_b : float;
+  9 |     param1 : string;  // Error 1: Redeclaration of parameter as variable
+ 10 | 
+ 11 |   { local_a = param1 + param2;
+ 12 | 
+ 13 |     // Valid operation
+ 14 |     local_b = param1 * 2.5;
+ 15 |     print("First function result: ", local_a);
+ 16 |   }
+ 17 | ];
+ 18 | 
+ 19 | void secondFunction(x : int)
+ 20 | [ var x : float;  // Error 3: Parameter name conflicts with variable
+ 21 |     y : int;
+ 22 |     y : string;   // Error 4: Variable declared twice
+ 23 | 
+ 24 |   { // Error 5: Trying to use variable from another function's scope
+ 25 |     local_a = x + 10;
+ 26 | 
+ 27 |     // Error 6: Using parameter from another function
+ 28 |     y = param1 * 2;
+ 29 | 
+ 30 |     // Valid: accessing global variable
+ 31 |     global_x = x + 5;
+ 32 | 
+ 33 |     // Error 7: Assigning wrong type to global
+ 34 |     global_y = "wrong type";
+ 35 | 
+ 36 |     print("Second function");
+ 37 |   }
+ 38 | ];
+ 39 | 
+ 40 | void thirdFunction(num : int)
+ 41 | [ var counter : int;
+ 42 | 
+ 43 |   { counter = 0;
+ 44 | 
+ 45 |     while (counter < num)
+ 46 |     {
+ 47 |       counter = counter + 1;
+ 48 | 
+ 49 |       // Error 8: Accessing variable from sibling function scope
+ 50 |       print("Value: ", local_b);
+ 51 |     };
+ 52 |   }
+ 53 | ];
+ 54 | 
+ 55 | void duplicateFunc(a : int)
+ 56 | [ var temp : int;
+ 57 |   { temp = a * 2;
+ 58 |     print(temp);
+ 59 |   }
+ 60 | ];
+ 61 | 
+ 62 | // Error 10: Function declared twice
+ 63 | void duplicateFunc(b : float)
+ 64 | [ var result : float;
+ 65 |   { result = b + 1.0;
+ 66 |     print(result);
+ 67 |   }
+ 68 | ];
+ 69 | 
+ 70 | void paramConflict(value : int, value : float)  // Error 11: Parameter declared twice
+ 71 | [ var local : int;
+ 72 |   { local = value;
+ 73 |     print(local);
+ 74 |   }
+ 75 | ];
+ 76 | 
+ 77 | main
+ 78 | { global_x = 100;
+ 79 |   global_y = 3.14;
+ 80 |   message = "Testing scopes";
+ 81 | 
+ 82 |   // Error 12: Trying to access function's local variable
+ 83 |   local_a = 50;
+ 84 | 
+ 85 |   // Error 13: Trying to access function parameter from main
+ 86 |   param1 = 25;
+ 87 | 
+ 88 |   // Valid: calling functions
+ 89 |   firstFunction(10, 20);
+ 90 |   secondFunction(global_x);
+ 91 | 
+ 92 |   // Error 14: Accessing variable that only exists in function scope
+ 93 |   print("Local b value: ", local_b);
+ 94 | 
+ 95 |   thirdFunction(5);
+ 96 |   duplicateFunc(global_x);
+ 97 | 
+ 98 |   print("End of scope test");
+ 99 | }
+100 | end
+101 | 
+----------------------------------------------------------------------
+
+🔍 ANÁLISIS LÉXICO, SINTÁCTICO Y SEMÁNTICO:
+----------------------------------------------------------------------
+❌ ERROR SEMÁNTICO: Variable 'param1' ya declarada en scope 'firstFunction'
+❌ ERROR SEMÁNTICO: Variable 'y' ya declarada en scope 'secondFunction'
+❌ ERROR SEMÁNTICO: Variable 'x' ya declarada en scope 'secondFunction'
+❌ ERROR SEMÁNTICO: Variable 'local_a' no declarada
+❌ ERROR SEMÁNTICO: Variable 'param1' no declarada
+❌ ERROR SEMÁNTICO: Operación '=' no válida entre tipos 'float' y 'string'
+❌ ERROR SEMÁNTICO: Variable 'local_b' no declarada
+❌ ERROR SEMÁNTICO: Función 'duplicateFunc' ya declarada
+❌ ERROR SEMÁNTICO: Variable 'value' ya declarada en scope 'paramConflict'
+❌ ERROR SEMÁNTICO: Variable 'local_a' no declarada
+❌ ERROR SEMÁNTICO: Variable 'param1' no declarada
+❌ ERROR SEMÁNTICO: Variable 'local_b' no declarada
+✅ Programa compilado exitosamente
+
+======================================================================
+REPORTE FINAL
+======================================================================
+❌ Se encontraron 12 errores en total:
+   - Errores léxicos: 0
+   - Errores semánticos: 12

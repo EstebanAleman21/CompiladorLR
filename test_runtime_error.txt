@@ -1,0 +1,11 @@
+program divisionTest;
+var x, y : int;
+    z : float;
+
+main
+{ x = 10;
+  y = 0;
+  z = x / y;
+  print("Result: ", z);
+}
+end

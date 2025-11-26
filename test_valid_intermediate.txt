@@ -1,61 +1,43 @@
-======================================================================
-CÓDIGO INTERMEDIO - CUÁDRUPLOS
-======================================================================
+%%CONSTANTS
+int:5=11000,10=11001,8=11002,1=11003
+float:3.14=12000
+string:"Suma: "=13000,"x es menor que y"=13001,"x no es menor"=13002,"Fin del programa"=13003
 
-#     Operador   Operando1       Operando2       Resultado      
-----------------------------------------------------------------------
-0     +          a               b               t1             
-1     =          t1              -               result         
-2     PRINT      -               -               "Suma: "       
-3     PRINT      -               -               result         
-4     ENDFUNC    -               -               -              
-5     =          5               -               x              
-6     =          10              -               y              
-7     =          3.14            -               z              
-8     <          x               y               t2             
-9     GOTOF      t2              -               15             
-10    PRINT      -               -               "x es menor que y"
-11    PRINT      -               -               x              
-12    PRINT      -               -               y              
-13    GOSUB      sum             -               0              
-14    GOTO       -               -               16             
-15    PRINT      -               -               "x no es menor"
-16    <          x               8               t3             
-17    GOTOF      t3              -               22             
-18    PRINT      -               -               x              
-19    +          x               1               t4             
-20    =          t4              -               x              
-21    GOTO       -               -               16             
-22    PRINT      -               -               "Fin del programa"
-23    END        -               -               -              
+%%FUNCTIONS
+sum:void:1:a:int:4001;b:int:4000
 
-======================================================================
-TABLA DE SÍMBOLOS
-======================================================================
+%%QUADRUPLES
+0:GOTO:-:-:6
+1:+:4001:4000:7000
+2:=:7000:-:4002
+3:PRINT:-:-:13000
+4:PRINT:-:-:4002
+5:ENDFUNC:-:-:-
+6:=:11000:-:1000
+7:=:11001:-:1001
+8:=:12000:-:2000
+9:<:1000:1001:10000
+10:GOTOF:10000:-:17
+11:PRINT:-:-:13001
+12:ERA:sum:-:-
+13:PARAM:1000:-:4001
+14:PARAM:1001:-:4000
+15:GOSUB:sum:-:1
+16:GOTO:-:-:18
+17:PRINT:-:-:13002
+18:<:1000:11002:10001
+19:GOTOF:10001:-:24
+20:PRINT:-:-:1000
+21:+:1000:11003:7001
+22:=:7001:-:1000
+23:GOTO:-:-:18
+24:PRINT:-:-:13003
+25:END:-:-:-
 
-Scope: global
-Variable        Tipo      
-----------------------------------------------------------------------
-z               float     
-x               int       
-y               int       
+%%MEMORY_COUNTERS
+global:int=2,float=1,string=0
+local:int=3,float=0,string=0
+temp:int=2,float=0,string=0,bool=2
+const:int=4,float=1,string=4
 
-Scope: sum
-Variable        Tipo      
-----------------------------------------------------------------------
-b               int       
-a               int       
-result          int       
-
-======================================================================
-DIRECTORIO DE FUNCIONES
-======================================================================
-
-Función: sum
-  Tipo retorno: void
-  Parámetros:
-    - a: int
-    - b: int
-  Variables internas:
-    - result: int
-  Cuádruplo inicial: 0
+%%END

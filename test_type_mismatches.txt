@@ -1,0 +1,163 @@
+program typeSystemTest;
+var int_var1, int_var2, int_var3 : int;
+    float_var1, float_var2 : float;
+    str_var1, str_var2 : string;
+
+void typeChecker(int_param : int, float_param : float, str_param : string)
+[ var mixed_result : int;
+    float_result : float;
+    string_result : string;
+
+  { // Error 1: Cannot divide string by int
+    string_result = str_param / int_param;
+
+    // Error 2: Cannot subtract strings
+    string_result = str_var1 - str_var2;
+
+    // Error 3: Boolean operator result assigned to int (should be bool)
+    mixed_result = int_param > float_param;
+
+    // Error 4: Cannot compare int with string
+    if (int_param == str_param)
+    {
+      print("Invalid comparison");
+    };
+
+    // Error 5: Cannot use arithmetic operator < on strings in wrong context
+    float_result = str_param < "test";
+
+    // Error 6: Multiplication of incompatible types
+    mixed_result = str_param * float_param;
+
+    // Error 7: Division result (float) to int without cast
+    int_var1 = int_param / int_var2;
+
+    // Error 8: Boolean expression needed, got arithmetic
+    while (int_param + float_param)
+    {
+      print("Wrong condition type");
+    };
+
+    // Error 9: String comparison result used in arithmetic
+    float_result = (str_var1 > str_var2) + 3.14;
+
+    // Error 10: Nested type mismatch
+    mixed_result = (int_param + float_param) * str_param;
+
+    // Valid operations
+    float_result = int_param + float_param;
+    string_result = str_var1 + str_var2;
+    print("Valid operations completed");
+  }
+];
+
+void complexExpressions(a : int, b : int)
+[ var x, y, z : int;
+    result : float;
+
+  { // Error 11: Multiple type mismatches in complex expression
+    x = (a > b) + (a * "string") - (b / "text");
+
+    // Error 12: Boolean expected in condition, got string
+    if (str_var1)
+    {
+      print("Wrong");
+    };
+
+    // Error 13: Relational operator result (bool) used in arithmetic
+    y = (a < b) * (a > b) + (a == b);
+
+    // Error 14: Cannot add bool to int
+    if (a > 5)
+    {
+      z = a + (b < 10);
+    };
+
+    // Error 15: String cannot be used in relational with numbers
+    do {
+      a = a + 1;
+    } while (str_var1 <= a);
+
+    // Error 16: Mixed types in same expression level
+    result = int_var1 + "text" + float_var1 - str_var2;
+
+    // Error 17: Wrong type in nested condition
+    if (a > b)
+    {
+      if (str_var1 + str_var2)  // Error: string used as bool
+      {
+        print("Nested error");
+      };
+    };
+
+    print("Complex expressions done");
+  }
+];
+
+void assignmentErrors(p1 : int, p2 : float)
+[ var i : int;
+    f : float;
+    s : string;
+
+  { // Error 18: String literal to int
+    i = "not a number";
+
+    // Error 19: Float literal to int (strict mode)
+    i = 3.14159;
+
+    // Error 20: Comparison result (bool) to string
+    s = (p1 > p2);
+
+    // Error 21: Cannot assign void function result (if you had return values)
+    // i = typeChecker(1, 2.0, "test");
+
+    // Error 22: Mixed assignment chain
+    i = f = s;
+
+    // Error 23: Unary minus on string
+    s = -str_var1;
+
+    // Error 24: Boolean operator result to string
+    s = (p1 != p2);
+
+    // Error 25: Complex nested type error
+    f = ((i + f) * s) / (p1 > p2);
+
+    print("Assignment errors section");
+  }
+];
+
+main
+{ int_var1 = 10;
+  int_var2 = 20;
+  float_var1 = 3.14;
+  float_var2 = 2.71;
+  str_var1 = "Hello";
+  str_var2 = "World";
+
+  // Error 26: Passing wrong types to function
+  typeChecker(str_var1, int_var1, float_var1);
+
+  // Error 27: Mixing types in function call
+  typeChecker(float_var1, "wrong", int_var1);
+
+  // Error 28: Non-boolean in if with complex expression
+  if ((int_var1 + float_var1) * str_var1)
+  {
+    print("Type error in condition");
+  };
+
+  // Error 29: Arithmetic with boolean subexpression
+  int_var3 = int_var1 + (int_var2 > 15) * float_var1;
+
+  // Error 30: String in do-while condition
+  do {
+    int_var1 = int_var1 - 1;
+  } while (str_var1);
+
+  complexExpressions(int_var1, int_var2);
+  assignmentErrors(int_var1, float_var1);
+
+  print("Type system test complete");
+}
+end

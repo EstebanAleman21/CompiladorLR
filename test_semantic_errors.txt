@@ -1,0 +1,87 @@
+program semanticTest;
+var x, y, z : int;
+    temperature : float;
+    name : string;
+
+void processData(value : int, factor : float)
+[ var local_result : int;
+    temp_val : float;
+
+  { // Error 1: Type mismatch - assigning float to int variable
+    local_result = value * factor;
+
+    // Error 2: Using undeclared variable
+    unknown_var = 10;
+
+    // Error 3: Wrong number of parameters in recursive call
+    processData(value);
+
+    // Error 4: Type mismatch in parameter
+    processData("hello", 3.14);
+
+    // Valid statement
+    temp_val = value + factor;
+    print("Temp value: ", temp_val);
+  }
+];
+
+void calculate(a : int, b : int, c : int)
+[ var result : int;
+
+  { // Error 5: Assigning string to int
+    result = "invalid string";
+
+    // Error 6: Boolean expression expected in if, but got int
+    if (result)
+    {
+      print("This should fail");
+    };
+
+    // Valid calculation
+    result = a + b * c;
+
+    // Error 7: Non-boolean in while condition
+    while (result)
+    {
+      result = result - 1;
+    };
+  }
+];
+
+main
+{ x = 5;
+  y = 10;
+  temperature = 98.6;
+
+  // Error 8: Variable not declared
+  undefined_var = 100;
+
+  // Error 9: Type mismatch - float to int
+  x = temperature;
+
+  // Error 10: Wrong parameter types
+  calculate(x, temperature, y);
+
+  // Error 11: Wrong number of parameters (too few)
+  calculate(x, y);
+
+  // Error 12: Wrong number of parameters (too many)
+  processData(x, temperature, y, z);
+
+  // Error 13: Function not declared
+  unknownFunction(x, y);
+
+  // Error 14: Boolean expected in do-while
+  do {
+    x = x + 1;
+  } while (x + y);
+
+  // Error 15: Complex type mismatch in expression
+  z = x + "string" * temperature;
+
+  // Valid call
+  processData(x, temperature);
+
+  print("End of test");
+}
+end
