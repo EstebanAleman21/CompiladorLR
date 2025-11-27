@@ -155,39 +155,39 @@ current_function = None
 
 class MemorySegments:
     """Definición de rangos de direcciones de memoria virtual"""
-    # Variables globales (1000 - 3999)
+    # Variables globales (1000 - 6999)
     GLOBAL_INT_BASE = 1000
     GLOBAL_INT_LIMIT = 1999
     GLOBAL_FLOAT_BASE = 2000
     GLOBAL_FLOAT_LIMIT = 2999
     GLOBAL_STRING_BASE = 3000
     GLOBAL_STRING_LIMIT = 3999
+    GLOBAL_VOID_BASE = 4000
+    GLOBAL_VOID_LIMIT = 4999
 
-    # Variables locales (4000 - 6999)
-    LOCAL_INT_BASE = 4000
-    LOCAL_INT_LIMIT = 4999
-    LOCAL_FLOAT_BASE = 5000
-    LOCAL_FLOAT_LIMIT = 5999
-    LOCAL_STRING_BASE = 6000
-    LOCAL_STRING_LIMIT = 6999
+    # Variables locales (7000 - 11999)
+    LOCAL_INT_BASE = 7000
+    LOCAL_INT_LIMIT = 7999
+    LOCAL_FLOAT_BASE = 8000
+    LOCAL_FLOAT_LIMIT = 8999
+    LOCAL_STRING_BASE = 9000
+    LOCAL_STRING_LIMIT = 9999
 
-    # Temporales (7000 - 10999)
-    TEMP_INT_BASE = 7000
-    TEMP_INT_LIMIT = 7999
-    TEMP_FLOAT_BASE = 8000
-    TEMP_FLOAT_LIMIT = 8999
-    TEMP_STRING_BASE = 9000
-    TEMP_STRING_LIMIT = 9999
-    TEMP_BOOL_BASE = 10000
-    TEMP_BOOL_LIMIT = 10999
+    # Temporales (12000 - 16999)
+    TEMP_INT_BASE = 12000
+    TEMP_INT_LIMIT = 12999
+    TEMP_FLOAT_BASE = 13000
+    TEMP_FLOAT_LIMIT = 13999
+    TEMP_BOOL_BASE = 14000
+    TEMP_BOOL_LIMIT = 14999
 
-    # Constantes (11000 - 13999)
-    CONST_INT_BASE = 11000
-    CONST_INT_LIMIT = 11999
-    CONST_FLOAT_BASE = 12000
-    CONST_FLOAT_LIMIT = 12999
-    CONST_STRING_BASE = 13000
-    CONST_STRING_LIMIT = 13999
+    # Constantes (17000 - 19999)
+    CONST_INT_BASE = 17000
+    CONST_INT_LIMIT = 17999
+    CONST_FLOAT_BASE = 18000
+    CONST_FLOAT_LIMIT = 18999
+    CONST_STRING_BASE = 19000
+    CONST_STRING_LIMIT = 19999
 
 
 class MemoryManager:
@@ -211,7 +211,6 @@ class MemoryManager:
         # Contadores temporales
         self.temp_int = MemorySegments.TEMP_INT_BASE
         self.temp_float = MemorySegments.TEMP_FLOAT_BASE
-        self.temp_string = MemorySegments.TEMP_STRING_BASE
         self.temp_bool = MemorySegments.TEMP_BOOL_BASE
 
         # Contadores de constantes
@@ -275,17 +274,18 @@ class MemoryManager:
             addr = self.temp_float
             self.temp_float += 1
             return addr
-        elif temp_type == 'string':
-            if self.temp_string > MemorySegments.TEMP_STRING_LIMIT:
-                raise MemoryError("Desbordamiento de memoria temporal string")
-            addr = self.temp_string
-            self.temp_string += 1
-            return addr
         elif temp_type == 'bool':
             if self.temp_bool > MemorySegments.TEMP_BOOL_LIMIT:
                 raise MemoryError("Desbordamiento de memoria temporal bool")
             addr = self.temp_bool
             self.temp_bool += 1
+            return addr
+        elif temp_type == 'string':
+            # Strings temporales usan el rango de int temporales
+            if self.temp_int > MemorySegments.TEMP_INT_LIMIT:
+                raise MemoryError("Desbordamiento de memoria temporal")
+            addr = self.temp_int
+            self.temp_int += 1
             return addr
 
     def get_constant_address(self, const_type):
@@ -319,7 +319,6 @@ class MemoryManager:
         """Reinicia contadores temporales"""
         self.temp_int = MemorySegments.TEMP_INT_BASE
         self.temp_float = MemorySegments.TEMP_FLOAT_BASE
-        self.temp_string = MemorySegments.TEMP_STRING_BASE
         self.temp_bool = MemorySegments.TEMP_BOOL_BASE
 
     def get_memory_usage(self):
@@ -338,7 +337,6 @@ class MemoryManager:
             'temp': {
                 'int': self.temp_int - MemorySegments.TEMP_INT_BASE,
                 'float': self.temp_float - MemorySegments.TEMP_FLOAT_BASE,
-                'string': self.temp_string - MemorySegments.TEMP_STRING_BASE,
                 'bool': self.temp_bool - MemorySegments.TEMP_BOOL_BASE
             },
             'const': {
@@ -1045,7 +1043,7 @@ class VirtualMachine:
 
     def _get_memory_segment(self, address):
         """Determina a qué segmento de memoria pertenece una dirección"""
-        if MemorySegments.GLOBAL_INT_BASE <= address <= MemorySegments.GLOBAL_STRING_LIMIT:
+        if MemorySegments.GLOBAL_INT_BASE <= address <= MemorySegments.GLOBAL_VOID_LIMIT:
             return 'global'
         elif MemorySegments.LOCAL_INT_BASE <= address <= MemorySegments.LOCAL_STRING_LIMIT:
             return 'local'
@@ -1101,8 +1099,10 @@ class VirtualMachine:
                 return 0
             elif address < MemorySegments.GLOBAL_STRING_BASE:
                 return 0.0
-            else:
+            elif address < MemorySegments.GLOBAL_VOID_BASE:
                 return ""
+            else:
+                return None  # void
         elif segment_type == 'local':
             if address < MemorySegments.LOCAL_FLOAT_BASE:
                 return 0
@@ -1113,10 +1113,8 @@ class VirtualMachine:
         elif segment_type == 'temp':
             if address < MemorySegments.TEMP_FLOAT_BASE:
                 return 0
-            elif address < MemorySegments.TEMP_STRING_BASE:
-                return 0.0
             elif address < MemorySegments.TEMP_BOOL_BASE:
-                return ""
+                return 0.0
             else:
                 return False
 
@@ -1410,7 +1408,7 @@ def save_intermediate_code(filename):
         usage = memory_manager.get_memory_usage()
         f.write(f"global:int={usage['global']['int']},float={usage['global']['float']},string={usage['global']['string']}\n")
         f.write(f"local:int={usage['local']['int']},float={usage['local']['float']},string={usage['local']['string']}\n")
-        f.write(f"temp:int={usage['temp']['int']},float={usage['temp']['float']},string={usage['temp']['string']},bool={usage['temp']['bool']}\n")
+        f.write(f"temp:int={usage['temp']['int']},float={usage['temp']['float']},bool={usage['temp']['bool']}\n")
         f.write(f"const:int={usage['const']['int']},float={usage['const']['float']},string={usage['const']['string']}\n")
         f.write("\n")
 
