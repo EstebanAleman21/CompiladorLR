@@ -1,0 +1,19 @@
+program testDeepRecursion;
+var n : int;
+
+void countdown(x : int)
+[ var temp : int;
+  { if (x > 0)
+    { temp = x - 1;
+      countdown(temp);
+    }
+    else
+    { print("Reached bottom!"); };
+  }
+];
+
+main
+{ n = 5000;
+  countdown(n);
+}
+end

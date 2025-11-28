@@ -1233,6 +1233,9 @@ class VirtualMachine:
             self._pending_params[result] = val
 
         elif operator == 'GOSUB':
+            # Verificar límite de recursión (máximo 1000 llamadas)
+            if len(self.call_stack) >= 1000:
+                raise RuntimeError("Stack overflow: se excedió el límite de 1000 llamadas recursivas")
             # Guardar dirección de retorno
             self.call_stack.append(self.instruction_pointer + 1)
             # Crear nuevo marco local
