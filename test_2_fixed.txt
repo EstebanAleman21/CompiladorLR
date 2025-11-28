@@ -1,5 +1,5 @@
-program REPETIDO;
-var  REPETIDO_5 : string;
+program TestProgram;
+var  variable : string;
    REPETIDO_3 : string;
     n : int;
      resultado : int;    
@@ -42,10 +42,6 @@ void factorial(num : int, otro : string, otra2 : float)
         }
         else
         {   resultado = 1;  };
-
-    #if ( "hola" != 2/1)   {};
-    #if ( "hola" == 2)   {};
-    #if ( 2 >0.5)   {};
 
     do {     }while (240.55 >30);
             

@@ -563,7 +563,6 @@ start = 'program'
 def p_program(p):
     '''program : PROGRAM ID program_name_save SEMICOL program_start program_vars program_funcs MAIN main_start program_body END'''
     print("✅ Programa compilado exitosamente")
-    add_quadruple('END', None, None, None)
 
 def p_program_name_save(p):
     '''program_name_save : '''
@@ -846,7 +845,9 @@ def p_f_call_end(p):
 # PRINT
 def p_print_stmt(p):
     '''print_stmt : PRINT LPAREN expression_list RPAREN SEMICOL'''
-    pass
+    # Agregar salto de línea al final del print
+    newline_addr = register_constant('"\\n"', 'string')
+    add_quadruple('PRINT', None, None, newline_addr)
 
 def p_expression_list_single(p):
     '''expression_list : expression print_action'''
@@ -1288,7 +1289,11 @@ class VirtualMachine:
             # Remover comillas de strings
             if isinstance(val, str) and val.startswith('"') and val.endswith('"'):
                 val = val[1:-1]
-            print(val)
+            # Manejar salto de línea
+            if val == '\\n':
+                print()  # Solo imprime newline
+            else:
+                print(val, end='')  # Sin newline automático
             self.output.append(str(val))
 
         # ================== TERMINACIÓN ==================
@@ -1363,8 +1368,9 @@ def print_quadruples():
     for i, (op, op1, op2, res) in enumerate(quadruples):
         op1_str = str(op1) if op1 is not None else '-'
         op2_str = str(op2) if op2 is not None else '-'
-        res_str = str(res) if res is not None else '-'
-        print(f"{i:<5} {op:<10} {op1_str:<15} {op2_str:<15} {res_str:<15}")
+        # Para resultado, mostrar +1 si es un salto (para display)
+        res_str = str(res + 1) if res is not None and op in ('GOTOMAIN', 'GOTO', 'GOTOF', 'GOTOT', 'GOSUB') else (str(res) if res is not None else '-')
+        print(f"{i+1:<5} {op:<10} {op1_str:<15} {op2_str:<15} {res_str:<15}")
 
 def save_intermediate_code(filename):
     """Guarda el código intermedio en formato estructurado para la VM"""
