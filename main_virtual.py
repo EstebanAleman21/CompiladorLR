@@ -149,6 +149,7 @@ temp_counter = 1
 # Scope actual
 current_scope = 'global'
 current_function = None
+program_name = None  # Nombre del programa para validar duplicados
 
 ###############################################################
 #              SISTEMA DE MEMORIA VIRTUAL
@@ -423,7 +424,7 @@ def reset_compiler():
     global function_directory, symbol_table, stack_args
     global jump_stack, quadruples, temp_counter
     global current_scope, current_function, constants_table, memory_manager
-    global current_call
+    global current_call, program_name
 
     function_directory = {}
     symbol_table = {'global': {}}
@@ -434,6 +435,7 @@ def reset_compiler():
     current_scope = 'global'
     current_function = None
     current_call = None
+    program_name = None
 
     # Reiniciar estructuras de memoria virtual
     constants_table = {'int': {}, 'float': {}, 'string': {}}
@@ -446,6 +448,13 @@ def add_variable(var_name, var_type, scope=None):
 
     if scope not in symbol_table:
         symbol_table[scope] = {}
+
+    # Verificar si el nombre de la variable es igual al nombre del programa
+    if var_name == program_name:
+        error_msg = f"ERROR SEMÁNTICO: Variable '{var_name}' no puede tener el mismo nombre que el programa"
+        parser_errors.append(error_msg)
+        print(f"❌ {error_msg}")
+        return None
 
     if var_name in symbol_table[scope]:
         error_msg = f"ERROR SEMÁNTICO: Variable '{var_name}' ya declarada en scope '{scope}'"
@@ -491,12 +500,19 @@ def register_constant(value, const_type):
 
 def add_function(func_name, return_type, params):
     """Añade una función al directorio"""
+    # Verificar si el nombre de la función es igual al nombre del programa
+    if func_name == program_name:
+        error_msg = f"ERROR SEMÁNTICO: Función '{func_name}' no puede tener el mismo nombre que el programa"
+        parser_errors.append(error_msg)
+        print(f"❌ {error_msg}")
+        return False
+
     if func_name in function_directory:
         error_msg = f"ERROR SEMÁNTICO: Función '{func_name}' ya declarada"
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
         return False
-    
+
     function_directory[func_name] = {
         'type': return_type,
         'params': params,
@@ -545,9 +561,14 @@ precedence = (
 start = 'program'
 
 def p_program(p):
-    '''program : PROGRAM ID SEMICOL program_start program_vars program_funcs MAIN main_start program_body END'''
+    '''program : PROGRAM ID program_name_save SEMICOL program_start program_vars program_funcs MAIN main_start program_body END'''
     print("✅ Programa compilado exitosamente")
     add_quadruple('END', None, None, None)
+
+def p_program_name_save(p):
+    '''program_name_save : '''
+    global program_name
+    program_name = p[-1]  # Guarda el nombre del programa (ID anterior)
 
 def p_program_start(p):
     '''program_start : '''
