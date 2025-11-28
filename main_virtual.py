@@ -881,7 +881,7 @@ def p_expression(p):
             right_address = operand_stack.pop()
             left_type = type_stack.pop()
             left_address = operand_stack.pop()
-            operator = operator_stack.pop()
+            operator = p[2]  # Operador relacional viene directamente de la gramática
 
             result_type = check_semantic_cube(operator, left_type, right_type)
             if result_type != 'error':
@@ -897,15 +897,15 @@ def p_relop(p):
              | OP_EQ
              | OP_GEQ
              | OP_LEQ'''
-    operator_stack.append(p[1])
+    p[0] = p[1]
 
 def p_exp_single(p):
     '''exp : termino'''
     pass
 
 def p_exp_add(p):
-    '''exp : termino OP_SUMA exp
-           | termino OP_RESTA exp'''
+    '''exp : exp OP_SUMA termino
+           | exp OP_RESTA termino'''
     if len(operand_stack) >= 2 and len(type_stack) >= 2:
         right_type = type_stack.pop()
         right_address = operand_stack.pop()
@@ -925,8 +925,8 @@ def p_termino_single(p):
     pass
 
 def p_termino_mult(p):
-    '''termino : factor OP_MULT termino
-               | factor OP_DIV termino'''
+    '''termino : termino OP_MULT factor
+               | termino OP_DIV factor'''
     if len(operand_stack) >= 2 and len(type_stack) >= 2:
         right_type = type_stack.pop()
         right_address = operand_stack.pop()
