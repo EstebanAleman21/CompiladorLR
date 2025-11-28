@@ -411,7 +411,7 @@ semantic_cube = {
     '=': {
         'int': {'int': 'int', 'float': 'error'},
         'float': {'int': 'float', 'float': 'float'},
-        'string': {'string': 'string', 'int': 'string', 'float': 'string'}
+        'string': {'string': 'string'}
     }
 }
 
@@ -672,6 +672,10 @@ def p_func_body(p):
 # BODY
 def p_body(p):
     '''body : LBRACE statements RBRACE'''
+    pass
+
+def p_statements_empty(p):
+    '''statements : empty'''
     pass
 
 def p_statements_single(p):

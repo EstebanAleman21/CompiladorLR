@@ -1,0 +1,29 @@
+program REPETIDO;
+var REPETIDO : string;
+    REPETIDO_3 : string;
+    x : int;
+
+void factorial(num : int, otro : string, otra2 : float)
+[ var aux : int;
+  { if (num > 1)
+    { factorial(num - 1, "hello", "aaa");
+      aux = aux * num;
+    }
+    else
+    { aux = 1; };
+  }
+];
+
+main
+{
+  x = 5;
+
+  do {
+    print(REPETIDO);
+  }while (240.55 > 30);
+
+  REPETIDO = 5 / -5.2;
+
+  factorial(5, "test", 3.14);
+}
+end

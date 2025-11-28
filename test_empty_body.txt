@@ -1,0 +1,9 @@
+program testEmpty;
+var x : int;
+
+main
+{
+  x = 5;
+  do { }while (240.55 > 30);
+}
+end
