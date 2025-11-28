@@ -1,0 +1,15 @@
+program testScope;
+var x : int;
+
+void foo()
+[ var y : int;
+  { y = 5;
+    x = 10;
+  }
+];
+
+main
+{ x = 1;
+  foo();
+}
+end

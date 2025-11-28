@@ -476,14 +476,12 @@ def add_variable(var_name, var_type, scope=None):
 
 def lookup_variable(var_name):
     """Busca una variable y retorna (tipo, dirección) o (None, None) si no existe"""
+    # Solo busca en el scope actual (no accede a globales desde funciones)
     if current_scope in symbol_table and var_name in symbol_table[current_scope]:
         var_info = symbol_table[current_scope][var_name]
         return var_info['type'], var_info['address']
-    elif 'global' in symbol_table and var_name in symbol_table['global']:
-        var_info = symbol_table['global'][var_name]
-        return var_info['type'], var_info['address']
     else:
-        error_msg = f"ERROR SEMÁNTICO: Variable '{var_name}' no declarada"
+        error_msg = f"ERROR SEMÁNTICO: Variable '{var_name}' no declarada en scope '{current_scope}'"
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
         return None, None
