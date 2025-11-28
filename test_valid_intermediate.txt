@@ -7,7 +7,7 @@ string:"Suma: "=19000,"x es menor que y"=19001,"x no es menor"=19002,"Fin del pr
 sum:void:1:a:int:7001;b:int:7000
 
 %%QUADRUPLES
-0:GOTO:-:-:6
+0:GOTOMAIN:-:-:6
 1:+:7001:7000:12000
 2:=:12000:-:7002
 3:PRINT:-:-:19000
@@ -19,7 +19,7 @@ sum:void:1:a:int:7001;b:int:7000
 9:<:1000:1001:14000
 10:GOTOF:14000:-:17
 11:PRINT:-:-:19001
-12:ERA:sum:-:-
+12:SUB:sum:-:-
 13:PARAM:1000:-:7001
 14:PARAM:1001:-:7000
 15:GOSUB:sum:-:1

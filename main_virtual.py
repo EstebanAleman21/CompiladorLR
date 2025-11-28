@@ -551,8 +551,8 @@ def p_program(p):
 
 def p_program_start(p):
     '''program_start : '''
-    # Generar GOTO al inicio para saltar a main (se llenará después)
-    quad_index = add_quadruple('GOTO', None, None, None)
+    # Generar GOTOMAIN al inicio para saltar a main (se llenará después)
+    quad_index = add_quadruple('GOTOMAIN', None, None, None)
     jump_stack.append(quad_index)
 
 def p_program_vars(p):
@@ -1199,6 +1199,10 @@ class VirtualMachine:
             self._set_value(result, val1 != val2)
 
         # ================== CONTROL DE FLUJO ==================
+        elif operator == 'GOTOMAIN':
+            self.instruction_pointer = result
+            return  # No incrementar IP
+
         elif operator == 'GOTO':
             self.instruction_pointer = result
             return  # No incrementar IP
