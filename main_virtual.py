@@ -800,7 +800,7 @@ def p_f_call_start(p):
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
     else:
-        add_quadruple('ERA', func_name, None, None)
+        add_quadruple('SUB', func_name, None, None)
         current_call = (func_name, 0, [])
 
 def p_f_call_end(p):
@@ -1216,7 +1216,7 @@ class VirtualMachine:
                 return
 
         # ================== LLAMADAS A FUNCIONES ==================
-        elif operator == 'ERA':
+        elif operator == 'SUB':
             # Preparar registro de activación (crear nuevo marco local)
             pass  # El marco se crea con GOSUB
 
