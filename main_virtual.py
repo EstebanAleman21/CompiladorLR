@@ -133,11 +133,12 @@ function_directory = {}
 # Tabla de variables por scope (sin direcciones de memoria)
 symbol_table = {}  # {scope: {var_name: tipo}}
 
-# Pilas para análisis semántico
-operand_stack = []
-type_stack = []
-operator_stack = []
+# Pila de argumentos: lista de tuplas (dirección, tipo)
+stack_args = []
 jump_stack = []
+
+# Contexto de llamada a función actual (para tracking de argumentos)
+current_call = None  # (func_name, param_count, arg_addresses)
 
 # Cuádruplos generados
 quadruples = []
@@ -419,20 +420,20 @@ semantic_cube = {
 ###############################################################
 
 def reset_compiler():
-    global function_directory, symbol_table, operand_stack, type_stack
-    global operator_stack, jump_stack, quadruples, temp_counter
+    global function_directory, symbol_table, stack_args
+    global jump_stack, quadruples, temp_counter
     global current_scope, current_function, constants_table, memory_manager
+    global current_call
 
     function_directory = {}
     symbol_table = {'global': {}}
-    operand_stack = []
-    type_stack = []
-    operator_stack = []
+    stack_args = []
     jump_stack = []
     quadruples = []
     temp_counter = 1
     current_scope = 'global'
     current_function = None
+    current_call = None
 
     # Reiniciar estructuras de memoria virtual
     constants_table = {'int': {}, 'float': {}, 'string': {}}
@@ -693,10 +694,8 @@ def p_statement(p):
 def p_assign(p):
     '''assign : ID OP_ASIGNA expression SEMICOL'''
     var_type, var_address = lookup_variable(p[1])
-    if var_type and var_address is not None and len(type_stack) > 0 and len(operand_stack) > 0:
-        expr_type = type_stack.pop()
-        expr_address = operand_stack.pop()
-
+    if var_type and var_address is not None and len(stack_args) > 0:
+        expr_address, expr_type = stack_args.pop()
         result_type = check_semantic_cube('=', var_type, expr_type)
         if result_type != 'error':
             add_quadruple('=', expr_address, None, var_address)
@@ -709,15 +708,13 @@ def p_condition(p):
 
 def p_condition_check(p):
     '''condition_check : '''
-    if len(type_stack) > 0:
-        exp_type = type_stack.pop()
+    if len(stack_args) > 0:
+        result, exp_type = stack_args.pop()
         if exp_type != 'bool':
             error_msg = f"ERROR SEMÁNTICO: La condición debe ser una expresión booleana, se recibió '{exp_type}'"
             parser_errors.append(error_msg)
             print(f"❌ {error_msg}")
             return
-        
-        result = operand_stack.pop()
         quad_index = add_quadruple('GOTOF', result, None, None)
         jump_stack.append(quad_index)
 
@@ -745,15 +742,13 @@ def p_cycle_start(p):
 
 def p_cycle_check(p):
     '''cycle_check : '''
-    if len(type_stack) > 0:
-        exp_type = type_stack.pop()
+    if len(stack_args) > 0:
+        result, exp_type = stack_args.pop()
         if exp_type != 'bool':
             error_msg = f"ERROR SEMÁNTICO: La condición del ciclo debe ser booleana, se recibió '{exp_type}'"
             parser_errors.append(error_msg)
             print(f"❌ {error_msg}")
             return
-        
-        result = operand_stack.pop()
         quad_index = add_quadruple('GOTOF', result, None, None)
         jump_stack.append(quad_index)
 
@@ -776,15 +771,13 @@ def p_cycle_do_start(p):
 
 def p_cycle_do_end(p):
     '''cycle_do_end : '''
-    if len(type_stack) > 0:
-        exp_type = type_stack.pop()
+    if len(stack_args) > 0:
+        result, exp_type = stack_args.pop()
         if exp_type != 'bool':
             error_msg = f"ERROR SEMÁNTICO: La condición del ciclo debe ser booleana, se recibió '{exp_type}'"
             parser_errors.append(error_msg)
             print(f"❌ {error_msg}")
             return
-        
-        result = operand_stack.pop()
         return_addr = jump_stack.pop()
         add_quadruple('GOTOT', result, None, return_addr)
 
@@ -796,21 +789,21 @@ def p_f_call(p):
 
 def p_f_call_start(p):
     '''f_call_start : '''
+    global current_call
     func_name = p[-2]
     if func_name not in function_directory:
         error_msg = f"ERROR SEMÁNTICO: Función '{func_name}' no declarada"
         parser_errors.append(error_msg)
         print(f"❌ {error_msg}")
     else:
-        # Generar cuádruplo ERA para preparar el registro de activación
         add_quadruple('ERA', func_name, None, None)
-        operator_stack.append(('GOSUB', func_name, 0, []))  # Agregar lista para argumentos
+        current_call = (func_name, 0, [])
 
 def p_f_call_end(p):
     '''f_call_end : '''
-    if len(operator_stack) > 0 and isinstance(operator_stack[-1], tuple) and operator_stack[-1][0] == 'GOSUB':
-        _, func_name, param_count, arg_addresses = operator_stack.pop()
-
+    global current_call
+    if current_call:
+        func_name, param_count, arg_addresses = current_call
         if func_name in function_directory:
             expected_params = len(function_directory[func_name]['params'])
             if param_count != expected_params:
@@ -818,13 +811,12 @@ def p_f_call_end(p):
                 parser_errors.append(error_msg)
                 print(f"❌ {error_msg}")
             else:
-                # Generar cuádruplos PARAM para cada argumento
                 params = function_directory[func_name]['params']
                 for i, arg_addr in enumerate(arg_addresses):
-                    param_addr = params[i][2]  # Dirección del parámetro
+                    param_addr = params[i][2]
                     add_quadruple('PARAM', arg_addr, None, param_addr)
-                # Generar cuádruplo GOSUB
                 add_quadruple('GOSUB', func_name, None, function_directory[func_name]['start_quad'])
+        current_call = None
 
 # PRINT
 def p_print_stmt(p):
@@ -841,20 +833,12 @@ def p_expression_list_multiple(p):
 
 def p_print_action(p):
     '''print_action : '''
-    # Verificar si estamos en contexto de llamada a función
-    in_func_call = (len(operator_stack) > 0 and
-                    isinstance(operator_stack[-1], tuple) and
-                    operator_stack[-1][0] == 'GOSUB')
-
-    if len(operand_stack) > 0:
-        operand_address = operand_stack.pop()
-        operand_type = type_stack.pop() if len(type_stack) > 0 else None
-
-        if in_func_call:
+    global current_call
+    if len(stack_args) > 0:
+        operand_address, operand_type = stack_args.pop()
+        if current_call:
             # Estamos en llamada a función - guardar argumento
-            _, func_name, count, arg_addresses = operator_stack.pop()
-
-            # Validar tipo de parámetro
+            func_name, count, arg_addresses = current_call
             if func_name in function_directory:
                 params = function_directory[func_name]['params']
                 if count < len(params):
@@ -863,10 +847,8 @@ def p_print_action(p):
                         error_msg = f"ERROR SEMÁNTICO: Parámetro {count+1} de '{func_name}' debe ser '{expected_type}', se pasó '{operand_type}'"
                         parser_errors.append(error_msg)
                         print(f"❌ {error_msg}")
-
-            # Agregar dirección del argumento a la lista
             arg_addresses.append(operand_address)
-            operator_stack.append(('GOSUB', func_name, count + 1, arg_addresses))
+            current_call = (func_name, count + 1, arg_addresses)
         else:
             # Estamos en print - generar cuádruplo PRINT
             add_quadruple('PRINT', None, None, operand_address)
@@ -876,19 +858,15 @@ def p_expression(p):
     '''expression : exp
                   | exp relop exp'''
     if len(p) == 4:
-        if len(operand_stack) >= 2 and len(type_stack) >= 2:
-            right_type = type_stack.pop()
-            right_address = operand_stack.pop()
-            left_type = type_stack.pop()
-            left_address = operand_stack.pop()
-            operator = p[2]  # Operador relacional viene directamente de la gramática
-
+        if len(stack_args) >= 2:
+            right_address, right_type = stack_args.pop()
+            left_address, left_type = stack_args.pop()
+            operator = p[2]
             result_type = check_semantic_cube(operator, left_type, right_type)
             if result_type != 'error':
                 temp_address = generate_temp(result_type)
                 add_quadruple(operator, left_address, right_address, temp_address)
-                operand_stack.append(temp_address)
-                type_stack.append(result_type)
+                stack_args.append((temp_address, result_type))
 
 def p_relop(p):
     '''relop : OP_GT
@@ -906,19 +884,15 @@ def p_exp_single(p):
 def p_exp_add(p):
     '''exp : exp OP_SUMA termino
            | exp OP_RESTA termino'''
-    if len(operand_stack) >= 2 and len(type_stack) >= 2:
-        right_type = type_stack.pop()
-        right_address = operand_stack.pop()
-        left_type = type_stack.pop()
-        left_address = operand_stack.pop()
+    if len(stack_args) >= 2:
+        right_address, right_type = stack_args.pop()
+        left_address, left_type = stack_args.pop()
         operator = p[2]
-
         result_type = check_semantic_cube(operator, left_type, right_type)
         if result_type != 'error':
             temp_address = generate_temp(result_type)
             add_quadruple(operator, left_address, right_address, temp_address)
-            operand_stack.append(temp_address)
-            type_stack.append(result_type)
+            stack_args.append((temp_address, result_type))
 
 def p_termino_single(p):
     '''termino : factor'''
@@ -927,19 +901,15 @@ def p_termino_single(p):
 def p_termino_mult(p):
     '''termino : termino OP_MULT factor
                | termino OP_DIV factor'''
-    if len(operand_stack) >= 2 and len(type_stack) >= 2:
-        right_type = type_stack.pop()
-        right_address = operand_stack.pop()
-        left_type = type_stack.pop()
-        left_address = operand_stack.pop()
+    if len(stack_args) >= 2:
+        right_address, right_type = stack_args.pop()
+        left_address, left_type = stack_args.pop()
         operator = p[2]
-
         result_type = check_semantic_cube(operator, left_type, right_type)
         if result_type != 'error':
             temp_address = generate_temp(result_type)
             add_quadruple(operator, left_address, right_address, temp_address)
-            operand_stack.append(temp_address)
-            type_stack.append(result_type)
+            stack_args.append((temp_address, result_type))
 
 def p_factor_paren(p):
     '''factor : LPAREN expression RPAREN'''
@@ -951,13 +921,11 @@ def p_factor_unary_plus(p):
 
 def p_factor_unary_minus(p):
     '''factor : OP_RESTA var_cte'''
-    if len(operand_stack) > 0 and len(type_stack) > 0:
-        operand_address = operand_stack.pop()
-        operand_type = type_stack.pop()
+    if len(stack_args) > 0:
+        operand_address, operand_type = stack_args.pop()
         temp_address = generate_temp(operand_type)
         add_quadruple('UMINUS', operand_address, None, temp_address)
-        operand_stack.append(temp_address)
-        type_stack.append(operand_type)
+        stack_args.append((temp_address, operand_type))
 
 def p_factor_var_cte(p):
     '''factor : var_cte'''
@@ -967,29 +935,22 @@ def p_var_cte_id(p):
     '''var_cte : ID'''
     var_type, var_address = lookup_variable(p[1])
     if var_type and var_address is not None:
-        operand_stack.append(var_address)
-        type_stack.append(var_type)
+        stack_args.append((var_address, var_type))
 
 def p_var_cte_int(p):
     '''var_cte : CONST_INT'''
-    value = p[1]
-    address = register_constant(value, 'int')
-    operand_stack.append(address)
-    type_stack.append('int')
+    address = register_constant(p[1], 'int')
+    stack_args.append((address, 'int'))
 
 def p_var_cte_float(p):
     '''var_cte : CONST_FLOAT'''
-    value = p[1]
-    address = register_constant(value, 'float')
-    operand_stack.append(address)
-    type_stack.append('float')
+    address = register_constant(p[1], 'float')
+    stack_args.append((address, 'float'))
 
 def p_var_cte_string(p):
     '''var_cte : CONST_STRING'''
-    value = f'"{p[1]}"'
-    address = register_constant(value, 'string')
-    operand_stack.append(address)
-    type_stack.append('string')
+    address = register_constant(f'"{p[1]}"', 'string')
+    stack_args.append((address, 'string'))
 
 def p_empty(p):
     '''empty :'''
