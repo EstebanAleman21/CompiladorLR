@@ -1,0 +1,145 @@
+program ComprehensiveTest;
+var globalCounter : int;
+    globalSum : float;
+    message : string;
+    i, j, k : int;
+    result : float;
+
+void printHeader(title : string)
+[ {
+    print("========================================");
+    print(title);
+    print("========================================");
+  }
+];
+
+void computeSum(n : int)
+[ var sum, counter : int;
+  {
+    sum = 0;
+    counter = 1;
+    while (counter <= n) {
+      sum = sum + counter;
+      counter = counter + 1;
+    };
+    print("Suma de 1 a ", n, " = ", sum);
+  }
+];
+
+void fibonacci(n : int, a : int, b : int)
+[ var next : int;
+  {
+    if (n > 0) {
+      print(a);
+      next = a + b;
+      fibonacci(n - 1, b, next);
+    };
+  }
+];
+
+void testConditionals(x : int)
+[ {
+    if (x > 0) {
+      if (x > 10) {
+        print(x, " es mayor que 10");
+      } else {
+        print(x, " esta entre 1 y 10");
+      };
+    } else {
+      if (x == 0) {
+        print(x, " es cero");
+      } else {
+        print(x, " es negativo");
+      };
+    };
+  }
+];
+
+void nestedLoops(rows : int, cols : int)
+[ var r, c : int;
+  {
+    r = 1;
+    while (r <= rows) {
+      c = 1;
+      while (c <= cols) {
+        print("(", r, ",", c, ") ");
+        c = c + 1;
+      };
+      r = r + 1;
+    };
+  }
+];
+
+main {
+  // Inicializar variables globales
+  globalCounter = 0;
+  globalSum = 0.0;
+  message = "Inicio del test";
+
+  printHeader("TEST COMPREHENSIVO");
+
+  // Test 1: Aritmetica
+  printHeader("1. ARITMETICA");
+  i = 5 + 3 * 2;
+  print("5 + 3 * 2 = ", i);
+  j = (5 + 3) * 2;
+  print("(5 + 3) * 2 = ", j);
+  result = 10 / 4;
+  print("10 / 4 = ", result);
+  k = 10 - 3 * 2 + 1;
+  print("10 - 3 * 2 + 1 = ", k);
+
+  // Test 2: Condicionales
+  printHeader("2. CONDICIONALES");
+  testConditionals(15);
+  testConditionals(5);
+  testConditionals(0);
+  testConditionals(-3);
+
+  // Test 3: Ciclos
+  printHeader("3. CICLOS WHILE");
+  computeSum(5);
+  computeSum(10);
+
+  // Test 4: Do-While
+  printHeader("4. DO-WHILE");
+  i = 0;
+  do {
+    print("do-while iteracion: ", i);
+    i = i + 1;
+  } while (i < 3);
+
+  // Test 5: Recursion
+  printHeader("5. RECURSION - FIBONACCI");
+  print("Primeros 8 numeros de Fibonacci:");
+  fibonacci(8, 0, 1);
+
+  // Test 6: Loops anidados
+  printHeader("6. LOOPS ANIDADOS");
+  print("Matriz 2x3:");
+  nestedLoops(2, 3);
+
+  // Test 7: Expresiones complejas
+  printHeader("7. EXPRESIONES COMPLEJAS");
+  i = 100;
+  j = 25;
+  result = (i + j) / (i - j);
+  print("(100 + 25) / (100 - 25) = ", result);
+
+  result = i * 2 + j * 3 - 50;
+  print("100 * 2 + 25 * 3 - 50 = ", result);
+
+  // Test 8: Operadores relacionales
+  printHeader("8. OPERADORES RELACIONALES");
+  i = 5;
+  j = 5;
+  if (i == j) { print("5 == 5: verdadero"); };
+  if (i != 10) { print("5 != 10: verdadero"); };
+  if (i >= 5) { print("5 >= 5: verdadero"); };
+  if (i <= 5) { print("5 <= 5: verdadero"); };
+
+  // Final
+  printHeader("FIN DEL TEST");
+  print("Todas las pruebas completadas exitosamente!");
+}
+end

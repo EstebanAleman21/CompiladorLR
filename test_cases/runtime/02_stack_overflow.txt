@@ -1,0 +1,18 @@
+program testStackOverflow;
+
+void infiniteRecursion(n : int)
+[ {
+    // Recursion que excede el limite de 1000
+    infiniteRecursion(n + 1);
+  }
+];
+
+main {
+  print("Iniciando recursion infinita...");
+
+  // ERROR RUNTIME: Stack overflow despues de 1000 llamadas
+  infiniteRecursion(1);
+
+  print("Este mensaje no se imprimira");
+}
+end

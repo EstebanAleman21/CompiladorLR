@@ -1,0 +1,36 @@
+program testDeepRecursion;
+
+void recurse(n : int)
+[ {
+    if (n > 0) {
+      if (n == 1) {
+        print("Reached bottom at n=1");
+      };
+      recurse(n - 1);
+    };
+  }
+];
+
+void countUp(current : int, target : int)
+[ {
+    if (current <= target) {
+      if (current == target) {
+        print("Reached target: ", target);
+      };
+      countUp(current + 1, target);
+    };
+  }
+];
+
+main {
+  print("=== Test recursion profunda (500 llamadas) ===");
+  recurse(500);
+  print("Success! 500 llamadas recursivas completadas.");
+
+  print("=== Test count up (100 llamadas) ===");
+  countUp(1, 100);
+  print("Success! Count up completado.");
+
+  print("=== Fin de pruebas ===");
+}
+end

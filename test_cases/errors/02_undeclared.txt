@@ -1,0 +1,13 @@
+program testUndeclared;
+var x : int;
+
+main {
+  x = 5;
+
+  // ERROR: Variable no declarada
+  y = 10;
+
+  // ERROR: Otra variable no declarada
+  print(z);
+}
+end

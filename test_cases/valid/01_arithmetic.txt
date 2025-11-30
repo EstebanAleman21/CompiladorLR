@@ -1,0 +1,22 @@
+program testArithmetic;
+var x, y, z : int;
+    f : float;
+
+main {
+  // Test precedencia: * antes de +
+  x = 5 + 3 * 2;
+  print("5 + 3 * 2 = ", x);
+
+  // Test parentesis
+  y = (5 + 3) * 2;
+  print("(5 + 3) * 2 = ", y);
+
+  // Test division produce float
+  f = 10 / 4;
+  print("10 / 4 = ", f);
+
+  // Test operaciones combinadas
+  z = 10 - 2 * 3 + 4;
+  print("10 - 2 * 3 + 4 = ", z);
+}
+end

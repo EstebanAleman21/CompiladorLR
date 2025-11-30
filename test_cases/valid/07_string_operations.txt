@@ -1,0 +1,19 @@
+program testStrings;
+var s1, s2, result : string;
+
+main {
+  s1 = "Hello";
+  s2 = " World";
+
+  // Concatenacion de strings
+  result = s1 + s2;
+  print("Concatenacion: ", result);
+
+  // Asignacion de string literal
+  result = "Test completo";
+  print("Literal: ", result);
+
+  // Print de multiples strings
+  print(s1, s2, "!");
+}
+end

@@ -1,0 +1,40 @@
+program testConditionals;
+var x, y : int;
+
+main {
+  x = 5;
+  y = 3;
+
+  // Test if-else basico
+  if (x > y) {
+    print("x es mayor que y");
+  } else {
+    print("x no es mayor que y");
+  };
+
+  // Test if sin else
+  if (x == 5) {
+    print("x es igual a 5");
+  };
+
+  // Test condicion falsa
+  if (y > 10) {
+    print("esto no se imprime");
+  };
+
+  // Test operadores relacionales
+  if (x >= 5) {
+    print("x >= 5");
+  };
+
+  if (y <= 3) {
+    print("y <= 3");
+  };
+
+  if (x != y) {
+    print("x != y");
+  };
+
+  print("Fin de pruebas condicionales");
+}
+end

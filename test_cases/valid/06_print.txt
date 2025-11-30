@@ -1,0 +1,32 @@
+program testPrint;
+var x : int;
+    y : float;
+    s : string;
+
+main {
+  x = 42;
+  y = 3.14;
+  s = "hello";
+
+  // Print simple
+  print("Mensaje simple");
+
+  // Print con variable int
+  print("Valor de x: ", x);
+
+  // Print con variable float
+  print("Valor de y: ", y);
+
+  // Print con variable string
+  print("Valor de s: ", s);
+
+  // Print con multiples argumentos
+  print("x = ", x, ", y = ", y, ", s = ", s);
+
+  // Print con expresiones
+  print("x + 10 = ", x + 10);
+
+  // Print con parentesis
+  print("Resultado: ", (x + 8) / 10);
+}
+end

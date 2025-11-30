@@ -1,0 +1,46 @@
+program testFunctionChain;
+
+void printValue(v : int)
+[ {
+    print("Value: ", v);
+  }
+];
+
+void doubleAndPrint(n : int)
+[ var doubled : int;
+  {
+    doubled = n * 2;
+    printValue(doubled);
+  }
+];
+
+void processNumber(x : int)
+[ {
+    print("Processing ", x);
+    doubleAndPrint(x);
+  }
+];
+
+void tripleChain(a : int, b : int)
+[ var sum : int;
+  {
+    sum = a + b;
+    print("Sum of ", a, " and ", b, " is:");
+    processNumber(sum);
+  }
+];
+
+main {
+  print("=== Cadena de funciones ===");
+
+  printValue(42);
+
+  doubleAndPrint(5);
+
+  processNumber(10);
+
+  tripleChain(3, 7);
+
+  print("=== Fin de pruebas ===");
+}
+end

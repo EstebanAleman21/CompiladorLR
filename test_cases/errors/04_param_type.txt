@@ -1,0 +1,22 @@
+program testParamType;
+
+void foo(x : int, y : float)
+[ {
+    print(x, y);
+  }
+];
+
+void bar(name : string)
+[ {
+    print(name);
+  }
+];
+
+main {
+  // ERROR: Segundo parametro debe ser float, se pasa string
+  foo(5, "hello");
+
+  // ERROR: Parametro debe ser string, se pasa int
+  bar(123);
+}
+end

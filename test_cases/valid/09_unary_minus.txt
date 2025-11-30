@@ -1,0 +1,34 @@
+program testUnaryMinus;
+var x, y : int;
+    f, g : float;
+
+main {
+  print("=== Unario menos con enteros ===");
+
+  x = 5;
+  y = -x;
+  print("-5 = ", y);
+
+  y = -10;
+  print("-10 = ", y);
+
+  print("=== Unario menos con floats ===");
+
+  f = 3.14;
+  g = -f;
+  print("-3.14 = ", g);
+
+  g = -2.5;
+  print("-2.5 = ", g);
+
+  print("=== Expresiones con negativo ===");
+
+  y = x + -3;
+  print("5 + -3 = ", y);
+
+  y = -x + 10;
+  print("-5 + 10 = ", y);
+
+  print("=== Fin de pruebas ===");
+}
+end

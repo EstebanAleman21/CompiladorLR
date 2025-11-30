@@ -1,0 +1,8 @@
+program DUPLICADO;
+var DUPLICADO : int;
+
+main {
+  // ERROR: Variable tiene el mismo nombre que el programa
+  DUPLICADO = 5;
+}
+end

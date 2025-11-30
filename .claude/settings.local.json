@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source:*)",
+      "Bash(python main_virtual.py:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

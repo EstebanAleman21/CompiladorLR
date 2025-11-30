@@ -1,0 +1,12 @@
+program testTypeMismatch;
+var x : int;
+    s : string;
+
+main {
+  // ERROR: Asignar float a int
+  x = 3.14;
+
+  // ERROR: Asignar float a string
+  s = 5 / 2.0;
+}
+end

@@ -1,0 +1,19 @@
+program testNonBooleanCondition;
+var x : int;
+    s : string;
+
+main {
+  x = 5;
+
+  // ERROR: Condicion debe ser resultado de comparacion
+  // Si el compilador permite esto, el comportamiento puede variar
+  if (x) {
+    print("Condicion int - puede o no funcionar");
+  };
+
+  // Uso correcto para comparar
+  if (x > 0) {
+    print("Esto si es correcto");
+  };
+}
+end

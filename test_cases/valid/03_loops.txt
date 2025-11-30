@@ -1,0 +1,34 @@
+program testLoops;
+var i : int;
+
+main {
+  // Test while loop
+  print("While loop 0-2:");
+  i = 0;
+  while (i < 3) {
+    print(i);
+    i = i + 1;
+  };
+
+  // Test do-while loop
+  print("Do-while loop 0-2:");
+  i = 0;
+  do {
+    print(i);
+    i = i + 1;
+  } while (i < 3);
+
+  // Test do-while que ejecuta al menos una vez
+  print("Do-while ejecuta al menos una vez:");
+  i = 10;
+  do {
+    print("Ejecutado con i = ", i);
+  } while (i < 5);
+
+  // Test cuerpo vacio (no debe dar error)
+  i = 0;
+  do { } while (i > 5);
+
+  print("Fin de pruebas de ciclos");
+}
+end

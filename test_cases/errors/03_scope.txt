@@ -1,0 +1,16 @@
+program testScope;
+var globalVar : int;
+
+void foo()
+[ {
+    // ERROR: Funciones no pueden acceder a variables globales
+    globalVar = 5;
+    print(globalVar);
+  }
+];
+
+main {
+  globalVar = 10;
+  foo();
+}
+end

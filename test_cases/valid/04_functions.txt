@@ -1,0 +1,48 @@
+program testFunctions;
+var result : int;
+
+void suma(a : int, b : int)
+[ var r : int;
+  {
+    r = a + b;
+    print("Suma: ", a, " + ", b, " = ", r);
+  }
+];
+
+void multiplica(x : int, y : int)
+[ var producto : int;
+  {
+    producto = x * y;
+    print("Producto: ", x, " * ", y, " = ", producto);
+  }
+];
+
+void saludar(nombre : string)
+[ {
+    print("Hola, ", nombre);
+  }
+];
+
+void multipleParams(a : int, b : float, c : string)
+[ {
+    print("Int: ", a);
+    print("Float: ", b);
+    print("String: ", c);
+  }
+];
+
+main {
+  print("=== Pruebas de funciones ===");
+
+  suma(5, 3);
+  suma(10, 20);
+
+  multiplica(4, 7);
+
+  saludar("Mundo");
+
+  multipleParams(42, 3.14, "test");
+
+  print("=== Fin de pruebas ===");
+}
+end

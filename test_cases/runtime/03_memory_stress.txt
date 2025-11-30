@@ -1,0 +1,32 @@
+program testMemoryStress;
+var i : int;
+    result : float;
+    sum : int;
+
+main {
+  print("=== Stress test de temporales ===");
+
+  i = 0;
+  sum = 0;
+  while (i < 100) {
+    // Cada iteracion crea multiples temporales
+    result = (i + 1) * (i + 2) / (i + 3) + (i * 2) - (i / 2);
+    sum = sum + i;
+    i = i + 1;
+  };
+  print("Loop 100 iteraciones completado");
+  print("Suma: ", sum);
+  print("Ultimo result: ", result);
+
+  print("=== Test con expresiones muy largas ===");
+
+  i = 0;
+  while (i < 50) {
+    result = i + i + i + i + i + i + i + i + i + i;
+    i = i + 1;
+  };
+  print("Loop expresiones largas completado");
+
+  print("=== Stress test pasado exitosamente ===");
+}
+end

@@ -1,0 +1,52 @@
+program testComplexExpr;
+var a, b, c, d : int;
+    result : float;
+
+main {
+  a = 2;
+  b = 3;
+  c = 4;
+  d = 5;
+
+  print("=== Precedencia de operadores ===");
+
+  // * y / antes de + y -
+  result = a + b * c;
+  print("2 + 3*4 = ", result);
+
+  result = a + b * c - d;
+  print("2 + 3*4 - 5 = ", result);
+
+  result = a + b * c - d / 2;
+  print("2 + 3*4 - 5/2 = ", result);
+
+  print("=== Parentesis ===");
+
+  result = (a + b) * c;
+  print("(2+3)*4 = ", result);
+
+  result = a * (b + c);
+  print("2*(3+4) = ", result);
+
+  result = (a + b) * (c + d);
+  print("(2+3)*(4+5) = ", result);
+
+  print("=== Parentesis anidados ===");
+
+  result = ((a + b) * c) / d;
+  print("((2+3)*4)/5 = ", result);
+
+  result = a * ((b + c) * d);
+  print("2*((3+4)*5) = ", result);
+
+  print("=== Expresiones largas ===");
+
+  result = a + b - c + d - a + b;
+  print("2+3-4+5-2+3 = ", result);
+
+  result = a * b + c * d - a * c;
+  print("2*3 + 4*5 - 2*4 = ", result);
+
+  print("=== Fin de pruebas ===");
+}
+end

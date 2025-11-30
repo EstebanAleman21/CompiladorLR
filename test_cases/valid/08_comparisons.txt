@@ -1,0 +1,59 @@
+program testComparisons;
+var a, b : int;
+    f1, f2 : float;
+
+main {
+  a = 5;
+  b = 3;
+  f1 = 2.5;
+  f2 = 2.5;
+
+  print("=== Comparaciones de enteros ===");
+
+  if (a > b) {
+    print("5 > 3: true");
+  };
+
+  if (a >= b) {
+    print("5 >= 3: true");
+  };
+
+  if (b < a) {
+    print("3 < 5: true");
+  };
+
+  if (b <= a) {
+    print("3 <= 5: true");
+  };
+
+  if (a != b) {
+    print("5 != 3: true");
+  };
+
+  print("=== Comparaciones de floats ===");
+
+  if (f1 == f2) {
+    print("2.5 == 2.5: true");
+  };
+
+  if (f1 >= f2) {
+    print("2.5 >= 2.5: true");
+  };
+
+  if (f1 <= f2) {
+    print("2.5 <= 2.5: true");
+  };
+
+  print("=== Comparacion int vs float ===");
+
+  if (a > f1) {
+    print("5 > 2.5: true");
+  };
+
+  if (b < f1) {
+    print("3 < 2.5: false (no se imprime)");
+  };
+
+  print("=== Fin de pruebas ===");
+}
+end

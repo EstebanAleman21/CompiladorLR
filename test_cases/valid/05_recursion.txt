@@ -1,0 +1,37 @@
+program testRecursion;
+var n : int;
+
+void countdown(x : int)
+[ {
+    if (x > 0) {
+      print(x);
+      countdown(x - 1);
+    } else {
+      print("Despegue!");
+    };
+  }
+];
+
+void factorial(n : int, acc : int)
+[ var next : int;
+  {
+    if (n > 1) {
+      next = acc * n;
+      factorial(n - 1, next);
+    } else {
+      print("Factorial resultado: ", acc);
+    };
+  }
+];
+
+main {
+  print("=== Countdown desde 5 ===");
+  countdown(5);
+
+  print("=== Factorial de 5 ===");
+  factorial(5, 1);
+
+  print("=== Factorial de 6 ===");
+  factorial(6, 1);
+}
+end

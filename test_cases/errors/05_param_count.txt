@@ -1,0 +1,22 @@
+program testParamCount;
+
+void twoParams(a : int, b : int)
+[ {
+    print(a, b);
+  }
+];
+
+void threeParams(x : int, y : int, z : int)
+[ {
+    print(x, y, z);
+  }
+];
+
+main {
+  // ERROR: Funcion espera 2 parametros, se pasa 1
+  twoParams(5);
+
+  // ERROR: Funcion espera 3 parametros, se pasan 2
+  threeParams(1, 2);
+}
+end
