@@ -560,7 +560,8 @@ start = 'program'
 
 def p_program(p):
     '''program : PROGRAM ID program_name_save SEMICOL program_start program_vars program_funcs MAIN main_start program_body END'''
-    print("✅ Programa compilado exitosamente")
+    if len(parser_errors) == 0 and len(lexer_errors) == 0:
+        print("✅ Programa compilado exitosamente")
 
 def p_program_name_save(p):
     '''program_name_save : '''
