@@ -1,59 +1,26 @@
 program testMemorySegments;
-var gi1, gi2, gi3 : int;
-    gf1, gf2 : float;
-    gs1, gs2 : string;
+var gi1, gi2 : int;
+    gf1 : float;
+    gs1 : string;
 
-void testLocal(li : int, lf : float, ls : string)
-[ var localInt1, localInt2 : int;
-      localFloat : float;
+void testLocal(li : int, lf : float)
+[ var localInt : int;
   {
-    localInt1 = li + 1;
-    localInt2 = li + 2;
-    localFloat = lf + 1.0;
-    print("Local int1: ", localInt1);
-    print("Local int2: ", localInt2);
-    print("Local float: ", localFloat);
-    print("Param string: ", ls);
-  }
-];
-
-void testMultipleLocals(a : int, b : int)
-[ var x, y, z : int;
-  {
-    x = a + 1;
-    y = b + 1;
-    z = x + y;
-    print("Multi-local result: ", z);
+    localInt = li + 1;
+    print("Local: ", localInt);
   }
 ];
 
 main {
-  print("=== Variables globales ===");
-
   gi1 = 100;
   gi2 = 200;
-  gi3 = 300;
   gf1 = 3.14;
-  gf2 = 2.71;
   gs1 = "Hello";
-  gs2 = "World";
 
-  print("Global int 1: ", gi1);
-  print("Global int 2: ", gi2);
-  print("Global int 3: ", gi3);
-  print("Global float 1: ", gf1);
-  print("Global float 2: ", gf2);
-  print("Global string 1: ", gs1);
-  print("Global string 2: ", gs2);
+  print("Global int: ", gi1);
+  print("Global float: ", gf1);
+  print("Global string: ", gs1);
 
-  print("=== Variables locales ===");
-
-  testLocal(10, 2.5, "test");
-
-  print("=== Multiples locales ===");
-
-  testMultipleLocals(5, 7);
-
-  print("=== Fin de pruebas ===");
+  testLocal(10, 2.5);
 }
 end

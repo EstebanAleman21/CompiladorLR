@@ -367,6 +367,57 @@ ERROR EN TIEMPO DE EJECUCION: Stack overflow: se excedio el limite de 1000 llama
 
 ---
 
+### 04_division_zero_float.txt
+**Error runtime:** Division entre cero con operandos float
+
+```
+x = 10.5;
+y = 0.0;
+result = x / y;  // ERROR: division entre cero
+```
+
+**Salida esperada:**
+```
+ERROR EN TIEMPO DE EJECUCION: Division entre cero
+```
+
+**Componente probado:** Deteccion de division por cero con floats
+
+---
+
+### 05_division_zero_expression.txt
+**Error runtime:** Division entre cero en expresion compleja
+
+```
+a = 10; b = 5; c = 5;
+result = a / (b - c);  // b - c = 0, ERROR!
+```
+
+**Salida esperada:**
+```
+ERROR EN TIEMPO DE EJECUCION: Division entre cero
+```
+
+**Componente probado:** Deteccion de division por cero cuando el divisor es resultado de una expresion
+
+---
+
+### 06_deep_call_chain.txt
+**Error runtime:** Stack overflow con cadena de llamadas
+
+```
+level1(1500) -> level2(1500) -> level3(1500 veces recursivo)
+```
+
+**Salida esperada:**
+```
+ERROR EN TIEMPO DE EJECUCION: Stack overflow: se excedio el limite de 1000 llamadas recursivas
+```
+
+**Componente probado:** Limite de recursion con multiples funciones en cadena
+
+---
+
 ## Resumen de Cobertura
 
 ### Componentes del Compilador
@@ -389,7 +440,7 @@ ERROR EN TIEMPO DE EJECUCION: Stack overflow: se excedio el limite de 1000 llama
 | Control de Flujo (GOTO) | 02, 03, 10 |
 | Llamadas a Funciones | 04, 05, 11, 14 |
 | Manejo de Memoria | 13, runtime/03 |
-| Deteccion de Errores Runtime | runtime/01, runtime/02 |
+| Deteccion de Errores Runtime | runtime/01-06 |
 | Print | 06, todos |
 
 ### Cuadruplos Probados

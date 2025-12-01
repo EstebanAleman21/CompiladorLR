@@ -1,0 +1,17 @@
+program testDivisionZeroFloat;
+var x : float;
+    y : float;
+    result : float;
+
+main {
+  x = 10.5;
+  y = 0.0;
+
+  print("Intentando dividir float ", x, " / ", y);
+
+  // ERROR RUNTIME: Division entre cero con floats
+  result = x / y;
+
+  print("Este mensaje no se imprimira");
+}
+end

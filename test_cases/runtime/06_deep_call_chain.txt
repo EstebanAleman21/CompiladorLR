@@ -1,0 +1,35 @@
+program testDeepCallChain;
+
+void level3(n : int)
+[ {
+    if (n > 0) {
+      level3(n - 1);
+    };
+  }
+];
+
+void level2(n : int)
+[ {
+    print("Level 2, n=", n);
+    level3(n);
+  }
+];
+
+void level1(n : int)
+[ {
+    print("Level 1, n=", n);
+    level2(n);
+  }
+];
+
+main {
+  print("Iniciando cadena de llamadas profundas...");
+  print("level1 -> level2 -> level3 (recursivo 1500 veces)");
+
+  // ERROR RUNTIME: Stack overflow
+  // level1 llama level2, level2 llama level3, level3 se llama 1500 veces
+  level1(1500);
+
+  print("Este mensaje no se imprimira");
+}
+end

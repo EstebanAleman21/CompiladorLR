@@ -1,0 +1,19 @@
+program testDivisionZeroExpr;
+var a, b, c : int;
+    result : float;
+
+main {
+  a = 10;
+  b = 5;
+  c = 5;
+
+  print("a=", a, " b=", b, " c=", c);
+  print("Calculando a / (b - c)...");
+
+  // ERROR RUNTIME: Division entre cero en expresion compleja
+  // b - c = 5 - 5 = 0
+  result = a / (b - c);
+
+  print("Este mensaje no se imprimira");
+}
+end

@@ -1,0 +1,27 @@
+%%CONSTANTS
+float:10.5=18000,0.0=18001
+string:"Intentando dividir float "=19000," / "=19001,"\n"=19002,"Este mensaje no se imprimira"=19003
+
+%%FUNCTIONS
+
+%%QUADRUPLES
+0:GOTOMAIN:-:-:1
+1:=:18000:-:2002
+2:=:18001:-:2001
+3:PRINT:-:-:19000
+4:PRINT:-:-:2002
+5:PRINT:-:-:19001
+6:PRINT:-:-:2001
+7:PRINT:-:-:19002
+8:/:2002:2001:13000
+9:=:13000:-:2000
+10:PRINT:-:-:19003
+11:PRINT:-:-:19002
+
+%%MEMORY_COUNTERS
+global:int=0,float=3,string=0
+local:int=0,float=0,string=0
+temp:int=0,float=1,bool=0
+const:int=0,float=2,string=4
+
+%%END

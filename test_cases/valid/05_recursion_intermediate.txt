@@ -1,6 +1,6 @@
 %%CONSTANTS
 int:0=17000,1=17001,5=17002,6=17003
-string:"\n"=19000,"Despegue!"=19001,"Factorial resultado: "=19002,"=== Countdown desde 5 ==="=19003,"=== Factorial de 5 ==="=19004,"=== Factorial de 6 ==="=19005
+string:"\n"=19000,"Despegue!"=19001,"Factorial resultado: "=19002,"Countdown desde 5"=19003,"Factorial de 5"=19004,"Factorial de 6"=19005
 
 %%FUNCTIONS
 countdown:void:1:x:int:7000

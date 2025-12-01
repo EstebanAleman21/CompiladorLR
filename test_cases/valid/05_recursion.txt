@@ -25,13 +25,13 @@ void factorial(n : int, acc : int)
 ];
 
 main {
-  print("=== Countdown desde 5 ===");
+  print("Countdown desde 5");
   countdown(5);
 
-  print("=== Factorial de 5 ===");
+  print("Factorial de 5");
   factorial(5, 1);
 
-  print("=== Factorial de 6 ===");
+  print("Factorial de 6");
   factorial(6, 1);
 }
 end
